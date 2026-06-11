@@ -1,26 +1,87 @@
-//refer to the Desktop.cpp part of Display Interface Handout
-
 #include "Desktop.h"
-#include "Taskbar.h"
-#include <chrono> 
+#include "imgui.h"
+#include <chrono>
+#include <ctime>
 
-
-void Desktop::draw() {
-    //type niyo naang asa handout
+void Desktop::draw(bool* appRunning)
+{
+    renderWallpaper();
+    drawClock();
+    powerButton(appRunning);
 }
 
-void Desktop::drawClock () {
+void Desktop::renderWallpaper()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 screenSize = io.DisplaySize;
+    ImDrawList* draw = ImGui::GetBackgroundDrawList();
+
+    draw->AddRectFilledMultiColor(
+        ImVec2(0, 0),
+        ImVec2(screenSize.x, screenSize.y),
+        IM_COL32(10, 15, 40, 255),
+        IM_COL32(10, 15, 40, 255),
+        IM_COL32(10, 50, 70, 255),
+        IM_COL32(10, 50, 70, 255)
+    );
+
+    ImU32 gridColor = IM_COL32(255, 255, 255, 12);
+    for (float x = 0; x < screenSize.x; x += 60)
+        draw->AddLine(ImVec2(x, 0), ImVec2(x, screenSize.y), gridColor);
+    for (float y = 0; y < screenSize.y; y += 60)
+        draw->AddLine(ImVec2(0, y), ImVec2(screenSize.x, y), gridColor);
+}
+
+void Desktop::drawClock()
+{
     auto now = std::chrono::system_clock::now();
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
     std::tm* localTime = std::localtime(&currentTime);
 
-    //pakicontinue nlanag
+    char timeBuf[16];
+    char dateBuf[32];
+    std::strftime(timeBuf, sizeof(timeBuf), "%H:%M:%S", localTime);
+    std::strftime(dateBuf, sizeof(dateBuf), "%A, %B %d %Y", localTime);
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 screenSize = io.DisplaySize;
+    ImDrawList* draw = ImGui::GetForegroundDrawList();
+
+    float padding = 16.0f;
+    draw->AddText(ImGui::GetFont(), 26.0f,
+        ImVec2(screenSize.x - 160, padding),
+        IM_COL32(255, 255, 255, 220), timeBuf);
+    draw->AddText(ImGui::GetFont(), 14.0f,
+        ImVec2(screenSize.x - 210, padding + 28),
+        IM_COL32(255, 255, 255, 120), dateBuf);
 }
 
-void Desktop::powerButton() {
-    //pakicontinue nalang    
+void Desktop::powerButton(bool* appRunning)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 screenSize = io.DisplaySize;
+
+    float btnW = 50.0f, btnH = 50.0f, padding = 16.0f;
+
+    ImGui::SetNextWindowPos(ImVec2(screenSize.x - btnW - padding,
+                                   screenSize.y - btnH - padding));
+    ImGui::SetNextWindowSize(ImVec2(btnW + padding, btnH + padding));
+    ImGui::SetNextWindowBgAlpha(0.0f);
+    ImGui::Begin("##pwr", nullptr,
+        ImGuiWindowFlags_NoTitleBar  |
+        ImGuiWindowFlags_NoResize    |
+        ImGuiWindowFlags_NoMove      |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings
+    );
+
+    ImGui::PushStyleColor(ImGuiCol_Button,        IM_COL32(180, 30, 30, 200));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(220, 50, 50, 255));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive,  IM_COL32(255, 80, 80, 255));
+
+    if (ImGui::Button("PWR", ImVec2(btnW, btnH)))
+        *appRunning = false;
+
+    ImGui::PopStyleColor(3);
+    ImGui::End();
 }
-
-
-//smth add the taskbar here as well to incorporate it
-

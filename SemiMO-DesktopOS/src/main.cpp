@@ -1,14 +1,18 @@
-#include "GUIApplication.h"
+#include <iostream>
+#include "../include/GUIApplication.h"
 
 int main()
 {
     GUIApplication app;
 
-    if (!app.Initialize())
+    if (!app.initialize())
+    {
+        std::cerr << "[ERROR] Failed to initialize Application.\n";
         return -1;
+    }
 
-    app.Run();
-    app.Shutdown();
+    app.run();
+    app.shutdown();
 
     return 0;
 }

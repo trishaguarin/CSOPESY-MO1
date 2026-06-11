@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/Desktop.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/Desktop.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/src/main.cpp.obj"
+  "CMakeFiles/SemiMO.dir/src/main.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj.d"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj"
+  "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj.d"
+  "SemiMO.exe"
+  "SemiMO.exe.manifest"
+  "SemiMO.pdb"
+  "libSemiMO.dll.a"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/SemiMO.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

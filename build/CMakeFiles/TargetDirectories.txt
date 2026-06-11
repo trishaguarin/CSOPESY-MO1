@@ -1,0 +1,3 @@
+C:/Users/ADMIN/Desktop/CSOPESY-MO1/build/CMakeFiles/SemiMO.dir
+C:/Users/ADMIN/Desktop/CSOPESY-MO1/build/CMakeFiles/edit_cache.dir
+C:/Users/ADMIN/Desktop/CSOPESY-MO1/build/CMakeFiles/rebuild_cache.dir
