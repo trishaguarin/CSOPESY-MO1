@@ -128,29 +128,29 @@ SemiMO/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/build
 .PHONY : SemiMO/fast
 
-src/AppWindow.obj: src/AppWindow.cpp.obj
-.PHONY : src/AppWindow.obj
+include/glad/glad.obj: include/glad/glad.c.obj
+.PHONY : include/glad/glad.obj
 
 # target to build an object file
-src/AppWindow.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj
-.PHONY : src/AppWindow.cpp.obj
+include/glad/glad.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/include/glad/glad.c.obj
+.PHONY : include/glad/glad.c.obj
 
-src/AppWindow.i: src/AppWindow.cpp.i
-.PHONY : src/AppWindow.i
+include/glad/glad.i: include/glad/glad.c.i
+.PHONY : include/glad/glad.i
 
 # target to preprocess a source file
-src/AppWindow.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/AppWindow.cpp.i
-.PHONY : src/AppWindow.cpp.i
+include/glad/glad.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/include/glad/glad.c.i
+.PHONY : include/glad/glad.c.i
 
-src/AppWindow.s: src/AppWindow.cpp.s
-.PHONY : src/AppWindow.s
+include/glad/glad.s: include/glad/glad.c.s
+.PHONY : include/glad/glad.s
 
 # target to generate assembly for a file
-src/AppWindow.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/AppWindow.cpp.s
-.PHONY : src/AppWindow.cpp.s
+include/glad/glad.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/include/glad/glad.c.s
+.PHONY : include/glad/glad.c.s
 
 src/Desktop.obj: src/Desktop.cpp.obj
 .PHONY : src/Desktop.obj
@@ -199,150 +199,6 @@ src/GUIApplication.s: src/GUIApplication.cpp.s
 src/GUIApplication.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.s
 .PHONY : src/GUIApplication.cpp.s
-
-src/TaskManager.obj: src/TaskManager.cpp.obj
-.PHONY : src/TaskManager.obj
-
-# target to build an object file
-src/TaskManager.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj
-.PHONY : src/TaskManager.cpp.obj
-
-src/TaskManager.i: src/TaskManager.cpp.i
-.PHONY : src/TaskManager.i
-
-# target to preprocess a source file
-src/TaskManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/TaskManager.cpp.i
-.PHONY : src/TaskManager.cpp.i
-
-src/TaskManager.s: src/TaskManager.cpp.s
-.PHONY : src/TaskManager.s
-
-# target to generate assembly for a file
-src/TaskManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/TaskManager.cpp.s
-.PHONY : src/TaskManager.cpp.s
-
-src/Taskbar.obj: src/Taskbar.cpp.obj
-.PHONY : src/Taskbar.obj
-
-# target to build an object file
-src/Taskbar.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj
-.PHONY : src/Taskbar.cpp.obj
-
-src/Taskbar.i: src/Taskbar.cpp.i
-.PHONY : src/Taskbar.i
-
-# target to preprocess a source file
-src/Taskbar.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/Taskbar.cpp.i
-.PHONY : src/Taskbar.cpp.i
-
-src/Taskbar.s: src/Taskbar.cpp.s
-.PHONY : src/Taskbar.s
-
-# target to generate assembly for a file
-src/Taskbar.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/Taskbar.cpp.s
-.PHONY : src/Taskbar.cpp.s
-
-src/UIConfig.obj: src/UIConfig.cpp.obj
-.PHONY : src/UIConfig.obj
-
-# target to build an object file
-src/UIConfig.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj
-.PHONY : src/UIConfig.cpp.obj
-
-src/UIConfig.i: src/UIConfig.cpp.i
-.PHONY : src/UIConfig.i
-
-# target to preprocess a source file
-src/UIConfig.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UIConfig.cpp.i
-.PHONY : src/UIConfig.cpp.i
-
-src/UIConfig.s: src/UIConfig.cpp.s
-.PHONY : src/UIConfig.s
-
-# target to generate assembly for a file
-src/UIConfig.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UIConfig.cpp.s
-.PHONY : src/UIConfig.cpp.s
-
-src/UIManager.obj: src/UIManager.cpp.obj
-.PHONY : src/UIManager.obj
-
-# target to build an object file
-src/UIManager.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj
-.PHONY : src/UIManager.cpp.obj
-
-src/UIManager.i: src/UIManager.cpp.i
-.PHONY : src/UIManager.i
-
-# target to preprocess a source file
-src/UIManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UIManager.cpp.i
-.PHONY : src/UIManager.cpp.i
-
-src/UIManager.s: src/UIManager.cpp.s
-.PHONY : src/UIManager.s
-
-# target to generate assembly for a file
-src/UIManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UIManager.cpp.s
-.PHONY : src/UIManager.cpp.s
-
-src/UniqueApp1.obj: src/UniqueApp1.cpp.obj
-.PHONY : src/UniqueApp1.obj
-
-# target to build an object file
-src/UniqueApp1.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj
-.PHONY : src/UniqueApp1.cpp.obj
-
-src/UniqueApp1.i: src/UniqueApp1.cpp.i
-.PHONY : src/UniqueApp1.i
-
-# target to preprocess a source file
-src/UniqueApp1.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.i
-.PHONY : src/UniqueApp1.cpp.i
-
-src/UniqueApp1.s: src/UniqueApp1.cpp.s
-.PHONY : src/UniqueApp1.s
-
-# target to generate assembly for a file
-src/UniqueApp1.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.s
-.PHONY : src/UniqueApp1.cpp.s
-
-src/UniqueApp2.obj: src/UniqueApp2.cpp.obj
-.PHONY : src/UniqueApp2.obj
-
-# target to build an object file
-src/UniqueApp2.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj
-.PHONY : src/UniqueApp2.cpp.obj
-
-src/UniqueApp2.i: src/UniqueApp2.cpp.i
-.PHONY : src/UniqueApp2.i
-
-# target to preprocess a source file
-src/UniqueApp2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.i
-.PHONY : src/UniqueApp2.cpp.i
-
-src/UniqueApp2.s: src/UniqueApp2.cpp.s
-.PHONY : src/UniqueApp2.s
-
-# target to generate assembly for a file
-src/UniqueApp2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.s
-.PHONY : src/UniqueApp2.cpp.s
 
 src/main.obj: src/main.cpp.obj
 .PHONY : src/main.obj
@@ -440,6 +296,30 @@ third_party/imgui/imgui.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.s
 .PHONY : third_party/imgui/imgui.cpp.s
 
+third_party/imgui/imgui_demo.obj: third_party/imgui/imgui_demo.cpp.obj
+.PHONY : third_party/imgui/imgui_demo.obj
+
+# target to build an object file
+third_party/imgui/imgui_demo.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj
+.PHONY : third_party/imgui/imgui_demo.cpp.obj
+
+third_party/imgui/imgui_demo.i: third_party/imgui/imgui_demo.cpp.i
+.PHONY : third_party/imgui/imgui_demo.i
+
+# target to preprocess a source file
+third_party/imgui/imgui_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.i
+.PHONY : third_party/imgui/imgui_demo.cpp.i
+
+third_party/imgui/imgui_demo.s: third_party/imgui/imgui_demo.cpp.s
+.PHONY : third_party/imgui/imgui_demo.s
+
+# target to generate assembly for a file
+third_party/imgui/imgui_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\SemiMO.dir\build.make CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.s
+.PHONY : third_party/imgui/imgui_demo.cpp.s
+
 third_party/imgui/imgui_draw.obj: third_party/imgui/imgui_draw.cpp.obj
 .PHONY : third_party/imgui/imgui_draw.obj
 
@@ -521,33 +401,15 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... SemiMO
-	@echo ... src/AppWindow.obj
-	@echo ... src/AppWindow.i
-	@echo ... src/AppWindow.s
+	@echo ... include/glad/glad.obj
+	@echo ... include/glad/glad.i
+	@echo ... include/glad/glad.s
 	@echo ... src/Desktop.obj
 	@echo ... src/Desktop.i
 	@echo ... src/Desktop.s
 	@echo ... src/GUIApplication.obj
 	@echo ... src/GUIApplication.i
 	@echo ... src/GUIApplication.s
-	@echo ... src/TaskManager.obj
-	@echo ... src/TaskManager.i
-	@echo ... src/TaskManager.s
-	@echo ... src/Taskbar.obj
-	@echo ... src/Taskbar.i
-	@echo ... src/Taskbar.s
-	@echo ... src/UIConfig.obj
-	@echo ... src/UIConfig.i
-	@echo ... src/UIConfig.s
-	@echo ... src/UIManager.obj
-	@echo ... src/UIManager.i
-	@echo ... src/UIManager.s
-	@echo ... src/UniqueApp1.obj
-	@echo ... src/UniqueApp1.i
-	@echo ... src/UniqueApp1.s
-	@echo ... src/UniqueApp2.obj
-	@echo ... src/UniqueApp2.i
-	@echo ... src/UniqueApp2.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
@@ -560,6 +422,9 @@ help:
 	@echo ... third_party/imgui/imgui.obj
 	@echo ... third_party/imgui/imgui.i
 	@echo ... third_party/imgui/imgui.s
+	@echo ... third_party/imgui/imgui_demo.obj
+	@echo ... third_party/imgui/imgui_demo.i
+	@echo ... third_party/imgui/imgui_demo.s
 	@echo ... third_party/imgui/imgui_draw.obj
 	@echo ... third_party/imgui/imgui_draw.i
 	@echo ... third_party/imgui/imgui_draw.s

@@ -141,7 +141,19 @@ CMakeFiles/SemiMO.dir/src/main.cpp.obj: \
  C:/msys64/ucrt64/include/c++/15.2.0/istream \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/istream.tcc \
  C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/GUIApplication.h \
- C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/GLFW/glfw3.h \
- C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdint.h \
- C:/msys64/ucrt64/include/stdint.h C:/msys64/ucrt64/include/GL/gl.h \
- C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/Desktop.h
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/Desktop.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/AppWindow.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imconfig.h \
+ C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/float.h \
+ C:/msys64/ucrt64/include/float.h \
+ C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdarg.h \
+ C:/msys64/ucrt64/include/stdarg.h \
+ C:/msys64/ucrt64/include/_mingw_stdarg.h \
+ C:/msys64/ucrt64/include/string.h \
+ C:/msys64/ucrt64/include/sec_api/string_s.h \
+ C:/msys64/ucrt64/include/assert.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/Taskbar.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/TaskManager.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/UniqueApp1.h \
+ C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/UniqueApp2.h

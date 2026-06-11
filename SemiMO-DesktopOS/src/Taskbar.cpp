@@ -12,7 +12,7 @@
 // }
 
 // void Taskbar::drawSystemTray() {
-    //type niyo naang asa handout
+    // type niyo naang asa handout
 // }
 
 //include parts for the buttons ng taskmanager, and unique apps here as well

@@ -2,11 +2,14 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 
-bool GUIApplication::initialize()
-{
+// starts the app itself
+bool GUIApplication::initialize() {
     if (!glfwInit())
     {
         std::cerr << "[ERROR] Failed to initialize GLFW.\n";
@@ -26,6 +29,8 @@ bool GUIApplication::initialize()
     }
 
     glfwMakeContextCurrent(window);
+    desktop.setAppRunning(&appRunning);
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);
 
     IMGUI_CHECKVERSION();
@@ -38,6 +43,7 @@ bool GUIApplication::initialize()
     return true;
 }
 
+// runs the main loop
 void GUIApplication::run()
 {
     while (!glfwWindowShouldClose(window) && appRunning)
@@ -48,7 +54,8 @@ void GUIApplication::run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        desktop.draw(&appRunning);
+        desktop.draw();
+        // TODO: add all other components here
 
         ImGui::Render();
         int display_w, display_h;
@@ -62,6 +69,7 @@ void GUIApplication::run()
     }
 }
 
+// for exiting
 void GUIApplication::shutdown()
 {
     ImGui_ImplOpenGL3_Shutdown();

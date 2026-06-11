@@ -3,13 +3,28 @@
 #include <chrono>
 #include <ctime>
 
-void Desktop::draw(bool* appRunning)
+Desktop::Desktop()
+    : AppWindow("Desktop")
 {
-    renderWallpaper();
-    drawClock();
-    powerButton(appRunning);
+    show(); // desktop is always visible
 }
 
+void Desktop::setAppRunning(bool* running)
+{
+    appRunning = running;
+}
+
+void Desktop::draw()
+{
+    if (!isShown())
+        return;
+
+    renderWallpaper();
+    drawClock();
+    powerButton();
+}
+
+// self-explanatory
 void Desktop::renderWallpaper()
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -32,6 +47,7 @@ void Desktop::renderWallpaper()
         draw->AddLine(ImVec2(0, y), ImVec2(screenSize.x, y), gridColor);
 }
 
+// self-explanatory
 void Desktop::drawClock()
 {
     auto now = std::chrono::system_clock::now();
@@ -56,28 +72,41 @@ void Desktop::drawClock()
         IM_COL32(255, 255, 255, 120), dateBuf);
 }
 
-void Desktop::powerButton(bool* appRunning)
+// self-explanatory
+void Desktop::powerButton()
 {
+    if (!appRunning)
+        return;
+
     ImGuiIO& io = ImGui::GetIO();
     ImVec2 screenSize = io.DisplaySize;
 
-    float btnW = 50.0f, btnH = 50.0f, padding = 16.0f;
+    float btnW = 50.0f;
+    float btnH = 50.0f;
+    float padding = 16.0f;
 
-    ImGui::SetNextWindowPos(ImVec2(screenSize.x - btnW - padding,
-                                   screenSize.y - btnH - padding));
-    ImGui::SetNextWindowSize(ImVec2(btnW + padding, btnH + padding));
+    ImGui::SetNextWindowPos(
+        ImVec2(screenSize.x - btnW - padding,
+               screenSize.y - btnH - padding));
+
+    ImGui::SetNextWindowSize(
+        ImVec2(btnW + padding, btnH + padding));
+
     ImGui::SetNextWindowBgAlpha(0.0f);
-    ImGui::Begin("##pwr", nullptr,
-        ImGuiWindowFlags_NoTitleBar  |
-        ImGuiWindowFlags_NoResize    |
-        ImGuiWindowFlags_NoMove      |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoSavedSettings
-    );
 
-    ImGui::PushStyleColor(ImGuiCol_Button,        IM_COL32(180, 30, 30, 200));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(220, 50, 50, 255));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive,  IM_COL32(255, 80, 80, 255));
+    ImGui::Begin("##pwr", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings);
+
+    ImGui::PushStyleColor(ImGuiCol_Button,
+        IM_COL32(180, 30, 30, 200));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+        IM_COL32(220, 50, 50, 255));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+        IM_COL32(255, 80, 80, 255));
 
     if (ImGui::Button("PWR", ImVec2(btnW, btnH)))
         *appRunning = false;

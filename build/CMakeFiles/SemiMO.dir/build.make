@@ -113,116 +113,11 @@ CMakeFiles/SemiMO.dir/src/Desktop.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/Desktop.cpp.s"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\Desktop.cpp -o CMakeFiles\SemiMO.dir\src\Desktop.cpp.s
 
-CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/Taskbar.cpp
-CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj -MF CMakeFiles\SemiMO.dir\src\Taskbar.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\Taskbar.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\Taskbar.cpp
-
-CMakeFiles/SemiMO.dir/src/Taskbar.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/Taskbar.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\Taskbar.cpp > CMakeFiles\SemiMO.dir\src\Taskbar.cpp.i
-
-CMakeFiles/SemiMO.dir/src/Taskbar.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/Taskbar.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\Taskbar.cpp -o CMakeFiles\SemiMO.dir\src\Taskbar.cpp.s
-
-CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/TaskManager.cpp
-CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj -MF CMakeFiles\SemiMO.dir\src\TaskManager.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\TaskManager.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\TaskManager.cpp
-
-CMakeFiles/SemiMO.dir/src/TaskManager.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/TaskManager.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\TaskManager.cpp > CMakeFiles\SemiMO.dir\src\TaskManager.cpp.i
-
-CMakeFiles/SemiMO.dir/src/TaskManager.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/TaskManager.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\TaskManager.cpp -o CMakeFiles\SemiMO.dir\src\TaskManager.cpp.s
-
-CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UniqueApp1.cpp
-CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj -MF CMakeFiles\SemiMO.dir\src\UniqueApp1.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\UniqueApp1.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UniqueApp1.cpp
-
-CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UniqueApp1.cpp > CMakeFiles\SemiMO.dir\src\UniqueApp1.cpp.i
-
-CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UniqueApp1.cpp -o CMakeFiles\SemiMO.dir\src\UniqueApp1.cpp.s
-
-CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UniqueApp2.cpp
-CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj -MF CMakeFiles\SemiMO.dir\src\UniqueApp2.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\UniqueApp2.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UniqueApp2.cpp
-
-CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UniqueApp2.cpp > CMakeFiles\SemiMO.dir\src\UniqueApp2.cpp.i
-
-CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UniqueApp2.cpp -o CMakeFiles\SemiMO.dir\src\UniqueApp2.cpp.s
-
-CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UIManager.cpp
-CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj -MF CMakeFiles\SemiMO.dir\src\UIManager.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\UIManager.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UIManager.cpp
-
-CMakeFiles/SemiMO.dir/src/UIManager.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/UIManager.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UIManager.cpp > CMakeFiles\SemiMO.dir\src\UIManager.cpp.i
-
-CMakeFiles/SemiMO.dir/src/UIManager.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/UIManager.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UIManager.cpp -o CMakeFiles\SemiMO.dir\src\UIManager.cpp.s
-
-CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UIConfig.cpp
-CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj -MF CMakeFiles\SemiMO.dir\src\UIConfig.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\UIConfig.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UIConfig.cpp
-
-CMakeFiles/SemiMO.dir/src/UIConfig.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/UIConfig.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UIConfig.cpp > CMakeFiles\SemiMO.dir\src\UIConfig.cpp.i
-
-CMakeFiles/SemiMO.dir/src/UIConfig.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/UIConfig.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\UIConfig.cpp -o CMakeFiles\SemiMO.dir\src\UIConfig.cpp.s
-
-CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
-CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
-CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/AppWindow.cpp
-CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj -MF CMakeFiles\SemiMO.dir\src\AppWindow.cpp.obj.d -o CMakeFiles\SemiMO.dir\src\AppWindow.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\AppWindow.cpp
-
-CMakeFiles/SemiMO.dir/src/AppWindow.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/src/AppWindow.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\AppWindow.cpp > CMakeFiles\SemiMO.dir\src\AppWindow.cpp.i
-
-CMakeFiles/SemiMO.dir/src/AppWindow.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/src/AppWindow.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\src\AppWindow.cpp -o CMakeFiles\SemiMO.dir\src\AppWindow.cpp.s
-
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui.cpp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\imgui.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui.cpp
 
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.i: cmake_force
@@ -237,7 +132,7 @@ CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj: CMakeFiles/SemiMO.di
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui_draw.cpp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\imgui_draw.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui_draw.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_draw.cpp
 
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.i: cmake_force
@@ -252,7 +147,7 @@ CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj: CMakeFiles/SemiMO.
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui_tables.cpp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\imgui_tables.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui_tables.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_tables.cpp
 
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.i: cmake_force
@@ -267,7 +162,7 @@ CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj: CMakeFiles/SemiMO
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui_widgets.cpp
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\imgui_widgets.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui_widgets.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_widgets.cpp
 
 CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.i: cmake_force
@@ -278,11 +173,26 @@ CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.s"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_widgets.cpp -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui_widgets.cpp.s
 
+CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
+CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
+CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui_demo.cpp
+CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\imgui_demo.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui_demo.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_demo.cpp
+
+CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.i"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_demo.cpp > CMakeFiles\SemiMO.dir\third_party\imgui\imgui_demo.cpp.i
+
+CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.s"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\imgui_demo.cpp -o CMakeFiles\SemiMO.dir\third_party\imgui\imgui_demo.cpp.s
+
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: CMakeFiles/SemiMO.dir/flags.make
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/backends/imgui_impl_glfw.cpp
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\backends\imgui_impl_glfw.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\backends\imgui_impl_glfw.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\backends\imgui_impl_glfw.cpp
 
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.i: cmake_force
@@ -297,7 +207,7 @@ CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: CMa
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: CMakeFiles/SemiMO.dir/includes_CXX.rsp
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/backends/imgui_impl_opengl3.cpp
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj -MF CMakeFiles\SemiMO.dir\third_party\imgui\backends\imgui_impl_opengl3.cpp.obj.d -o CMakeFiles\SemiMO.dir\third_party\imgui\backends\imgui_impl_opengl3.cpp.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\backends\imgui_impl_opengl3.cpp
 
 CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.i: cmake_force
@@ -308,24 +218,34 @@ CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.s: cmake
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.s"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\third_party\imgui\backends\imgui_impl_opengl3.cpp -o CMakeFiles\SemiMO.dir\third_party\imgui\backends\imgui_impl_opengl3.cpp.s
 
+CMakeFiles/SemiMO.dir/include/glad/glad.c.obj: CMakeFiles/SemiMO.dir/flags.make
+CMakeFiles/SemiMO.dir/include/glad/glad.c.obj: CMakeFiles/SemiMO.dir/includes_C.rsp
+CMakeFiles/SemiMO.dir/include/glad/glad.c.obj: C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/glad/glad.c
+CMakeFiles/SemiMO.dir/include/glad/glad.c.obj: CMakeFiles/SemiMO.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/SemiMO.dir/include/glad/glad.c.obj"
+	C:\msys64\ucrt64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/SemiMO.dir/include/glad/glad.c.obj -MF CMakeFiles\SemiMO.dir\include\glad\glad.c.obj.d -o CMakeFiles\SemiMO.dir\include\glad\glad.c.obj -c C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\include\glad\glad.c
+
+CMakeFiles/SemiMO.dir/include/glad/glad.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/SemiMO.dir/include/glad/glad.c.i"
+	C:\msys64\ucrt64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\include\glad\glad.c > CMakeFiles\SemiMO.dir\include\glad\glad.c.i
+
+CMakeFiles/SemiMO.dir/include/glad/glad.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/SemiMO.dir/include/glad/glad.c.s"
+	C:\msys64\ucrt64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\ADMIN\Desktop\CSOPESY-MO1\SemiMO-DesktopOS\include\glad\glad.c -o CMakeFiles\SemiMO.dir\include\glad\glad.c.s
+
 # Object files for target SemiMO
 SemiMO_OBJECTS = \
 "CMakeFiles/SemiMO.dir/src/main.cpp.obj" \
 "CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.obj" \
 "CMakeFiles/SemiMO.dir/src/Desktop.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj" \
-"CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj" \
 "CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj" \
 "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj" \
 "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj" \
 "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj" \
+"CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj" \
 "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj" \
-"CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
+"CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj" \
+"CMakeFiles/SemiMO.dir/include/glad/glad.c.obj"
 
 # External object files for target SemiMO
 SemiMO_EXTERNAL_OBJECTS =
@@ -333,24 +253,19 @@ SemiMO_EXTERNAL_OBJECTS =
 SemiMO.exe: CMakeFiles/SemiMO.dir/src/main.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/src/Desktop.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj
-SemiMO.exe: CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj
+SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj
+SemiMO.exe: CMakeFiles/SemiMO.dir/include/glad/glad.c.obj
 SemiMO.exe: CMakeFiles/SemiMO.dir/build.make
 SemiMO.exe: CMakeFiles/SemiMO.dir/linkLibs.rsp
 SemiMO.exe: CMakeFiles/SemiMO.dir/objects1.rsp
 SemiMO.exe: CMakeFiles/SemiMO.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable SemiMO.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\ADMIN\Desktop\CSOPESY-MO1\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable SemiMO.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\SemiMO.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

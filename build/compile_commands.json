@@ -19,48 +19,6 @@
 },
 {
   "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\Taskbar.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\Taskbar.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/Taskbar.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\TaskManager.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\TaskManager.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/TaskManager.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\UniqueApp1.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\UniqueApp1.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UniqueApp1.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\UniqueApp2.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\UniqueApp2.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UniqueApp2.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\UIManager.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\UIManager.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UIManager.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/UIManager.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\UIConfig.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\UIConfig.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/UIConfig.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/UIConfig.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\src\\AppWindow.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\src\\AppWindow.cpp",
-  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/src/AppWindow.cpp",
-  "output": "CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj"
-},
-{
-  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\third_party\\imgui\\imgui.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\third_party\\imgui\\imgui.cpp",
   "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui.cpp",
   "output": "CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj"
@@ -85,6 +43,12 @@
 },
 {
   "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\third_party\\imgui\\imgui_demo.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\third_party\\imgui\\imgui_demo.cpp",
+  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/imgui_demo.cpp",
+  "output": "CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj"
+},
+{
+  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\third_party\\imgui\\backends\\imgui_impl_glfw.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\third_party\\imgui\\backends\\imgui_impl_glfw.cpp",
   "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/backends/imgui_impl_glfw.cpp",
   "output": "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
@@ -94,5 +58,11 @@
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe  @CMakeFiles/SemiMO.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\SemiMO.dir\\third_party\\imgui\\backends\\imgui_impl_opengl3.cpp.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\third_party\\imgui\\backends\\imgui_impl_opengl3.cpp",
   "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/third_party/imgui/backends/imgui_impl_opengl3.cpp",
   "output": "CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
+},
+{
+  "directory": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/SemiMO.dir/includes_C.rsp -g -o CMakeFiles\\SemiMO.dir\\include\\glad\\glad.c.obj -c C:\\Users\\ADMIN\\Desktop\\CSOPESY-MO1\\SemiMO-DesktopOS\\include\\glad\\glad.c",
+  "file": "C:/Users/ADMIN/Desktop/CSOPESY-MO1/SemiMO-DesktopOS/include/glad/glad.c",
+  "output": "CMakeFiles/SemiMO.dir/include/glad/glad.c.obj"
 }
 ]

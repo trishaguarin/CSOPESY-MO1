@@ -1,16 +1,23 @@
 #pragma once
-#include <GLFW/glfw3.h>
-#include "Desktop.h"
 
-class GUIApplication
-{
+struct GLFWwindow;
+
+#include "Desktop.h"
+#include "Taskbar.h"
+#include "TaskManager.h"
+#include "UniqueApp1.h"
+#include "UniqueApp2.h"
+
+class GUIApplication {
 public:
     bool initialize();
     void run();
     void shutdown();
 
 private:
-    GLFWwindow* window   = nullptr;
-    Desktop     desktop;
-    bool        appRunning = true;
+    GLFWwindow* window = nullptr;
+    Desktop desktop;
+    Taskbar taskbar;
+
+    bool appRunning = true;
 };

@@ -1,12 +1,20 @@
 #pragma once
 
-class Desktop
+#include "AppWindow.h"
+
+class Desktop : public AppWindow
 {
 public:
-    void draw(bool* appRunning);
+    Desktop();
+
+    void draw() override;
+
+    void setAppRunning(bool* running);
 
 private:
     void renderWallpaper();
     void drawClock();
-    void powerButton(bool* appRunning);
+    void powerButton();
+
+    bool* appRunning = nullptr;
 };

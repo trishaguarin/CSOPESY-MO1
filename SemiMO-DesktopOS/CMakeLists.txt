@@ -24,7 +24,23 @@ set(SOURCES
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
-add_executable(SemiMO ${SOURCES})
+add_executable(SemiMO
+    src/main.cpp
+    src/GUIApplication.cpp
+    src/Desktop.cpp
+
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+
+    include/glad/glad.h
+    include/glad/glad.c
+)
 
 target_include_directories(SemiMO PRIVATE
     include
