@@ -1,23 +1,20 @@
 #pragma once
 #include <string>
-
-enum class OSState
-{
-    Boot,
-    Setup,
-    Desktop
-};
+#include <vector>
+#include "AppWindow.h"
 
 class UIManager
 {
 public:
-    void Render();
+    // Window registry management
+    void RegisterWindow(AppWindow* window);
+    void ShowWindow(const std::string& windowName);
+    void HideWindow(const std::string& windowName);
+    
+    // Update and render all managed windows
+    void UpdateAllWindows();
+    void RenderAllWindows();
 
 private:
-    void RenderBootScreen();
-    void RenderSetupScreen();
-    void RenderDesktop();
-
-    OSState currentState = OSState::Boot;
-    std::string currentTime = "2026-06-11";
+    std::vector<AppWindow*> windows;
 };

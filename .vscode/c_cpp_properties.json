@@ -1,17 +1,17 @@
 {
   "configurations": [
     {
-      "name": "windows-gcc-x64",
+      "name": "windows-msvc-x64",
       "includePath": [
-        "${workspaceFolder}/**"
+        "${workspaceFolder}/SemiMO-DesktopOS/include",
+        "${workspaceFolder}/SemiMO-DesktopOS/third_party/imgui",
+        "${workspaceFolder}/SemiMO-DesktopOS/third_party/imgui/backends",
+        "${workspaceFolder}/SemiMO-DesktopOS/third_party/glfw/include"
       ],
-      "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
-      "cStandard": "${default}",
-      "cppStandard": "${default}",
-      "intelliSenseMode": "windows-gcc-x64",
-      "compilerArgs": [
-        ""
-      ]
+      "defines": [],
+      "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.39.33519/bin/Hostx64/x64/cl.exe",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-msvc-x64"
     }
   ],
   "version": 4

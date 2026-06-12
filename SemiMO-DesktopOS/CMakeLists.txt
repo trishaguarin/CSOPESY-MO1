@@ -27,6 +27,7 @@ set(SOURCES
 add_executable(SemiMO
     src/main.cpp
     src/GUIApplication.cpp
+    src/AppWindow.cpp
     src/Desktop.cpp
     src/Taskbar.cpp
     src/TaskManager.cpp
@@ -50,6 +51,7 @@ target_include_directories(SemiMO PRIVATE
     include
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
+    ${CMAKE_SOURCE_DIR}/third_party
     ${CMAKE_SOURCE_DIR}/third_party/glfw/include
 )
 
@@ -60,3 +62,12 @@ target_link_directories(SemiMO PRIVATE
 target_link_libraries(SemiMO PRIVATE
     glfw3 opengl32 gdi32 user32 kernel32
 )
+
+# Copy assets into the build output so runtime can find wallpapers and other data
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+)
+
+add_dependencies(SemiMO copy_assets)

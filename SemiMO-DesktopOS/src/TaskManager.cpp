@@ -14,7 +14,7 @@ TaskManager::TaskManager()
     }
 }
 
-// dummy data only !
+// dummy data
 void TaskManager::initDummyProcesses()
 {
     processes = {
@@ -43,6 +43,14 @@ void TaskManager::draw()
     if (!beginWindow())
         return;
 
+    static float refreshTimer = 0.0f;
+    refreshTimer += ImGui::GetIO().DeltaTime;
+    if (refreshTimer >= 0.25f) {
+        refreshData();
+        refreshTimer = 0.0f;
+    }
+    
+
     if (ImGui::BeginTabBar("TaskMgrTabs"))
     {
         if (ImGui::BeginTabItem("Processes"))
@@ -69,7 +77,7 @@ void TaskManager::drawProcessesTab()
         ImGuiTableFlags_Borders   |
         ImGuiTableFlags_RowBg     |
         ImGuiTableFlags_ScrollY,
-        ImVec2(0, -30))) // summary spacing
+        ImVec2(0, -30)))
     {
         ImGui::TableSetupColumn("PID",    ImGuiTableColumnFlags_DefaultSort);
         ImGui::TableSetupColumn("Name");
@@ -143,15 +151,26 @@ void TaskManager::updatePerformanceData()
         cpuHistory[i] = cpuHistory[i + 1];
         memoryHistory[i] = memoryHistory[i + 1];
     }
-
+    // Smooth incremental updates to avoid large jumps.
     float baseCpu = 14.0f;
     float baseMem = 42.0f;
-    cpuHistory[HISTORY_SIZE - 1] = baseCpu + (float)(rand() % 20) - 10.0f;
-    memoryHistory[HISTORY_SIZE - 1] = baseMem + (float)(rand() % 10) - 5.0f;
 
-    // clamp
+    if (cpuHistory[HISTORY_SIZE - 1] == 0.0f)
+        cpuHistory[HISTORY_SIZE - 1] = baseCpu;
+    if (memoryHistory[HISTORY_SIZE - 1] == 0.0f)
+        memoryHistory[HISTORY_SIZE - 1] = baseMem;
+
+    float cpuDelta = ((float)(rand() % 21) - 10.0f) / 20.0f; // -0.5 .. +0.5
+    float memDelta = ((float)(rand() % 21) - 10.0f) / 20.0f; // -0.5 .. +0.5
+
+    cpuHistory[HISTORY_SIZE - 1] = cpuHistory[HISTORY_SIZE - 1] + cpuDelta;
+    memoryHistory[HISTORY_SIZE - 1] = memoryHistory[HISTORY_SIZE - 1] + memDelta;
+
+    // clamp to sensible ranges
     if (cpuHistory[HISTORY_SIZE - 1] < 0.0f) cpuHistory[HISTORY_SIZE - 1] = 0.0f;
+    if (cpuHistory[HISTORY_SIZE - 1] > 100.0f) cpuHistory[HISTORY_SIZE - 1] = 100.0f;
     if (memoryHistory[HISTORY_SIZE - 1] < 0.0f) memoryHistory[HISTORY_SIZE - 1] = 0.0f;
+    if (memoryHistory[HISTORY_SIZE - 1] > 100.0f) memoryHistory[HISTORY_SIZE - 1] = 100.0f;
 }
 
 ImVec4 TaskManager::getStateColor(ProcessState state)
@@ -180,5 +199,25 @@ const char* TaskManager::getStateName(ProcessState state)
         case ProcessState::WAITING:    return "Waiting";
         case ProcessState::TERMINATED: return "Terminated";
         default:                       return "Unknown";
+    }
+}
+
+// refresh all dynamic data (process list metrics + performance history)
+void TaskManager::refreshData()
+{
+    updatePerformanceData();
+
+    // slightly change process CPU and memory usage to simulate activity
+    for (auto &p : processes)
+    {
+        float delta = ((float)(rand() % 201) - 100.0f) / 100.0f;
+        p.cpuUsage += delta * 0.2f;
+        if (p.cpuUsage < 0.0f) p.cpuUsage = 0.0f;
+        if (p.cpuUsage > 100.0f) p.cpuUsage = 100.0f;
+
+        int memDelta = (rand() % 33) - 16;
+        int newMem = (int)p.memoryUsage + memDelta;
+        if (newMem < 0) newMem = 0;
+        p.memoryUsage = (size_t)newMem;
     }
 }

@@ -2,6 +2,20 @@
 #include "imgui.h"
 #include <chrono>
 #include <ctime>
+#include <cstdio>
+#if defined(__has_include)
+#  if __has_include("stb_image.h")
+#    define STB_IMAGE_IMPLEMENTATION
+#    include "stb_image.h"
+#    define HAVE_STB_IMAGE 1
+#  else
+#    define HAVE_STB_IMAGE 0
+#  endif
+#else
+#  define HAVE_STB_IMAGE 0
+#endif
+#include <iostream>
+#include <cstdio>
 
 Desktop::Desktop()
     : AppWindow("Desktop")
@@ -45,6 +59,53 @@ void Desktop::renderWallpaper()
         draw->AddLine(ImVec2(x, 0), ImVec2(x, screenSize.y), gridColor);
     for (float y = 0; y < screenSize.y; y += 60)
         draw->AddLine(ImVec2(0, y), ImVec2(screenSize.x, y), gridColor);
+
+    // draw wallpaper if loaded
+    if (wallpaperTex) {
+        // ImTextureID is GLuint cast to void*
+        draw->AddImage((ImTextureID)(intptr_t)wallpaperTex, ImVec2(0, 0), ImVec2(screenSize.x, screenSize.y));
+        return; // wallpaper drawn, skip procedural background
+    }
+}
+void Desktop::loadWallpaper(const char* path)
+{
+    if (!path) return;
+
+#if HAVE_STB_IMAGE
+    int w, h, comp;
+    unsigned char* data = stbi_load(path, &w, &h, &comp, 4);
+    std::string usedPath;
+    if (!data) {
+        std::string fallback = std::string("../") + path;
+        data = stbi_load(fallback.c_str(), &w, &h, &comp, 4);
+        if (data) {
+            std::cerr << "Loaded wallpaper from fallback: " << fallback << std::endl;
+            usedPath = fallback;
+        } else {
+            std::cerr << "Failed to load wallpaper: " << path << std::endl;
+            return;
+        }
+    } else {
+        usedPath = path;
+    }
+
+    if (wallpaperTex) {
+        glDeleteTextures(1, &wallpaperTex);
+        wallpaperTex = 0;
+    }
+
+    glGenTextures(1, &wallpaperTex);
+    glBindTexture(GL_TEXTURE_2D, wallpaperTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    stbi_image_free(data);
+    wallpaperPath = usedPath;
+#else
+    std::cerr << "stb_image.h not available; wallpaper not loaded: " << path << std::endl;
+#endif
 }
 
 // self-explanatory

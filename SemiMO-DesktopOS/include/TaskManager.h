@@ -28,6 +28,7 @@ public:
     void draw() override;
 
 private:
+    void refreshData();
     void drawProcessesTab();
     void drawPerformanceTab();
     void updatePerformanceData();

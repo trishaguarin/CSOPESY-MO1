@@ -1,3 +1,4 @@
-C:/Users/Philip/OneDrive/Desktop/TERM3AY25-26/CSOPESY/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/SemiMO.dir
-C:/Users/Philip/OneDrive/Desktop/TERM3AY25-26/CSOPESY/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/edit_cache.dir
-C:/Users/Philip/OneDrive/Desktop/TERM3AY25-26/CSOPESY/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/rebuild_cache.dir
+C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/SemiMO.dir
+C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/copy_assets.dir
+C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/edit_cache.dir
+C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/rebuild_cache.dir

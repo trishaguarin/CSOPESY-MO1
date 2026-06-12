@@ -3,8 +3,11 @@
 #include <chrono>
 #include <ctime>
 
-void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
+void Taskbar::draw()
 {
+    if (!taskMgr || !app1 || !app2)
+        return;
+
     ImGuiIO& io = ImGui::GetIO();
     ImVec2 screenSize = io.DisplaySize;
 
@@ -37,8 +40,8 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
     // button 1: calculator
     if (ImGui::Button("CALC", ImVec2(btnW, btnH)))
     {
-        if (app1.isShown()) app1.hide();
-        else app1.show();
+        if (app1->isShown()) app1->hide();
+        else app1->show();
     }
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Calculator");
@@ -48,8 +51,8 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
     // button 2: notes
     if (ImGui::Button("NOTE", ImVec2(btnW, btnH)))
     {
-        if (app2.isShown()) app2.hide();
-        else app2.show();
+        if (app2->isShown()) app2->hide();
+        else app2->show();
     }
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Notepad");
@@ -59,8 +62,8 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
     // button 3: task manager
     if (ImGui::Button("TASK", ImVec2(btnW, btnH)))
     {
-        if (taskMgr.isShown()) taskMgr.hide();
-        else taskMgr.show();
+        if (taskMgr->isShown()) taskMgr->hide();
+        else taskMgr->show();
     }
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Task Manager");
@@ -75,6 +78,13 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
 
     ImGui::PopStyleVar();  // WindowPadding
     ImGui::PopStyleColor(); // WindowBg
+}
+
+void Taskbar::setWindows(TaskManager* tm, UniqueApp1* a1, UniqueApp2* a2)
+{
+    taskMgr = tm;
+    app1 = a1;
+    app2 = a2;
 }
 
 // right-side system tray area — clock and framerate

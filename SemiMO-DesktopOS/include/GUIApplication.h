@@ -1,5 +1,4 @@
 #pragma once
-
 struct GLFWwindow;
 
 #include "Desktop.h"

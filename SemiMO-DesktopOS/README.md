@@ -1,3 +1,37 @@
+# SemiMO Desktop OS — Build & Run (Windows)
+
+Configure & build
+1. Open PowerShell and change into the project folder:
+
+```powershell
+cd SemiMO-DesktopOS
+```
+
+2. Create an out-of-source build folder and configure with CMake:
+
+```powershell
+if (Test-Path build) { Remove-Item -Recurse -Force build }
+New-Item -ItemType Directory -Path build
+cd build
+cmake ..
+```
+
+3. Build (Release):
+
+```powershell
+cmake --build . --config Release
+```
+
+Run
+- From the `build` folder run:
+
+```powershell
+.\SemiMO.exe
+```
+
+stb_image (optional)
+- To enable runtime image loading from files, ensure `third_party/stb_image.h` is present. The CMakeLists has been updated to include `third_party` in the include path.
+
 # Semi-MO: Desktop-Style OS Mockup
 
 CSOPESY | Semi-Machine Output  
