@@ -28,6 +28,10 @@ add_executable(SemiMO
     src/main.cpp
     src/GUIApplication.cpp
     src/Desktop.cpp
+    src/Taskbar.cpp
+    src/TaskManager.cpp
+    src/UniqueApp1.cpp
+    src/UniqueApp2.cpp
 
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp

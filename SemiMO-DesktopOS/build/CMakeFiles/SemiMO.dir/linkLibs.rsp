@@ -1,0 +1,1 @@
+  -L"C:/Users/Philip/OneDrive/Desktop/TERM3AY25-26/CSOPESY/CSOPESY-MO1/SemiMO-DesktopOS/third_party/glfw/lib-mingw-w64"  -lglfw3 -lopengl32 -lgdi32 -luser32 -lkernel32 -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

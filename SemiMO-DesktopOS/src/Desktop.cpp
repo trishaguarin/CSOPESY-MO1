@@ -84,10 +84,11 @@ void Desktop::powerButton()
     float btnW = 50.0f;
     float btnH = 50.0f;
     float padding = 16.0f;
+    float taskbarHeight = 48.0f;
 
     ImGui::SetNextWindowPos(
         ImVec2(screenSize.x - btnW - padding,
-               screenSize.y - btnH - padding));
+               screenSize.y - btnH - padding - taskbarHeight));
 
     ImGui::SetNextWindowSize(
         ImVec2(btnW + padding, btnH + padding));

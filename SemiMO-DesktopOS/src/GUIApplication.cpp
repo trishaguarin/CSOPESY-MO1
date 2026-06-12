@@ -55,7 +55,10 @@ void GUIApplication::run()
         ImGui::NewFrame();
 
         desktop.draw();
-        // TODO: add all other components here
+        taskbar.draw(taskManager, app1, app2);
+        taskManager.draw();
+        app1.draw();
+        app2.draw();
 
         ImGui::Render();
         int display_w, display_h;
