@@ -7,7 +7,6 @@ TaskManager::TaskManager()
 {
     initDummyProcesses();
 
-    // fill history buffers with zeroes
     for (int i = 0; i < HISTORY_SIZE; i++)
     {
         cpuHistory[i] = 0.0f;
@@ -44,7 +43,6 @@ void TaskManager::draw()
     if (!beginWindow())
         return;
 
-    // tab bar for different views (matches handout pattern)
     if (ImGui::BeginTabBar("TaskMgrTabs"))
     {
         if (ImGui::BeginTabItem("Processes"))
@@ -63,7 +61,6 @@ void TaskManager::draw()
     endWindow();
 }
 
-// process table — closely resembles Windows Task Manager
 void TaskManager::drawProcessesTab()
 {
     if (ImGui::BeginTable("ProcessTable", 5,
@@ -72,7 +69,7 @@ void TaskManager::drawProcessesTab()
         ImGuiTableFlags_Borders   |
         ImGuiTableFlags_RowBg     |
         ImGuiTableFlags_ScrollY,
-        ImVec2(0, -30))) // leave room for summary
+        ImVec2(0, -30))) // summary spacing
     {
         ImGui::TableSetupColumn("PID",    ImGuiTableColumnFlags_DefaultSort);
         ImGui::TableSetupColumn("Name");
@@ -118,7 +115,6 @@ void TaskManager::drawProcessesTab()
         (int)processes.size(), totalCpu, totalMem);
 }
 
-// performance graphs — sliding window pattern from handout
 void TaskManager::drawPerformanceTab()
 {
     updatePerformanceData();
@@ -148,7 +144,6 @@ void TaskManager::updatePerformanceData()
         memoryHistory[i] = memoryHistory[i + 1];
     }
 
-    // simulate fluctuating CPU/memory values
     float baseCpu = 14.0f;
     float baseMem = 42.0f;
     cpuHistory[HISTORY_SIZE - 1] = baseCpu + (float)(rand() % 20) - 10.0f;

@@ -10,7 +10,7 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
 
     float taskbarHeight = 48.0f;
 
-    // position at bottom of screen (matches handout pattern)
+    // position at bottom of screen
     ImGui::SetNextWindowPos(ImVec2(0, screenSize.y - taskbarHeight));
     ImGui::SetNextWindowSize(ImVec2(screenSize.x, taskbarHeight));
 
@@ -28,13 +28,13 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
     float btnH = 32.0f;
     float btnW = 64.0f;
 
-    // icon button style
+    // icons
     ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(50, 50, 80, 200));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(70, 70, 120, 255));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(90, 90, 150, 255));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 0));
 
-    // button 1: calculator (UniqueApp1)
+    // button 1: calculator
     if (ImGui::Button("CALC", ImVec2(btnW, btnH)))
     {
         if (app1.isShown()) app1.hide();
@@ -45,7 +45,7 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
 
     ImGui::SameLine();
 
-    // button 2: notes (UniqueApp2)
+    // button 2: notes
     if (ImGui::Button("NOTE", ImVec2(btnW, btnH)))
     {
         if (app2.isShown()) app2.hide();
@@ -65,9 +65,9 @@ void Taskbar::draw(TaskManager& taskMgr, UniqueApp1& app1, UniqueApp2& app2)
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Task Manager");
 
-    ImGui::PopStyleVar();  // ItemSpacing
+    ImGui::PopStyleVar(); 
     ImGui::PopStyleColor(3); // button colors
-
+    
     // system tray on the right side
     drawSystemTray();
 
