@@ -1,20 +1,22 @@
 # ninja log v7
-4	49	8030521943032033	CMakeFiles/copy_assets	1bb6d47114064d10
-4	49	8030521943032033	C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/copy_assets	1bb6d47114064d10
-58	1156	8030521943562541	CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj	4f2624ea66e71daf
-79	1199	8030521943777770	CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj	ef52e128d6fc480b
-54	1259	8030521943522506	CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.obj	7790710a7599d0e1
-65	1306	8030521943637657	CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj	64fee2ef59ebbd47
-69	1345	8030521943687686	CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj	129600c32b9917c9
-75	1356	8030521943737739	CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj	9c5922ff627333ff
-50	1515	8030521943482464	CMakeFiles/SemiMO.dir/src/main.cpp.obj	257893ecb0c5b3bb
-106	1872	8030521944048014	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj	d8a99e4df0bf045f
-61	2049	8030521943592569	CMakeFiles/SemiMO.dir/src/Desktop.cpp.obj	498f6ffce6ae3120
-95	2772	8030521943937920	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj	6e935671d695507c
-117	2929	8030521944168127	CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj	f57536673bcd84ca
-123	3120	8030521944218179	CMakeFiles/SemiMO.dir/include/glad/glad.c.obj	9b1878fcc0420794
-89	3357	8030521943877861	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj	8b7ddddade944113
-100	3515	8030521943987960	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj	cd7453caea86b16b
-111	3701	8030521944098070	CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj	88c29e720f9c3116
-84	4457	8030521943827816	CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj	583539c8c986ecd0
-4458	4729	8030521987561008	SemiMO.exe	f6cfe896b7a5d8dc
+5	49	8030525691459829	CMakeFiles/copy_assets	1bb6d47114064d10
+5	49	8030525691459829	C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/copy_assets	1bb6d47114064d10
+57	612	8030525691983189	CMakeFiles/SemiMO.dir/src/AppWindow.cpp.obj	4f2624ea66e71daf
+76	671	8030525692167066	CMakeFiles/SemiMO.dir/src/UniqueApp2.cpp.obj	ef52e128d6fc480b
+65	724	8030525692054287	CMakeFiles/SemiMO.dir/src/Taskbar.cpp.obj	64fee2ef59ebbd47
+68	780	8030525692084318	CMakeFiles/SemiMO.dir/src/TaskManager.cpp.obj	129600c32b9917c9
+72	826	8030525692124363	CMakeFiles/SemiMO.dir/src/UniqueApp1.cpp.obj	9c5922ff627333ff
+110	1369	8030525692500796	CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj	f57536673bcd84ca
+99	1486	8030525692405516	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_demo.cpp.obj	d8a99e4df0bf045f
+104	1625	8030525692450738	CMakeFiles/SemiMO.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.obj	88c29e720f9c3116
+89	1700	8030525692292387	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_tables.cpp.obj	6e935671d695507c
+84	2232	8030525692252337	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_draw.cpp.obj	8b7ddddade944113
+94	2345	8030525692345449	CMakeFiles/SemiMO.dir/third_party/imgui/imgui_widgets.cpp.obj	cd7453caea86b16b
+80	2941	8030525692207093	CMakeFiles/SemiMO.dir/third_party/imgui/imgui.cpp.obj	583539c8c986ecd0
+30	88	8030526475698897	CMakeFiles/copy_assets	1bb6d47114064d10
+30	88	8030526475698897	C:/Users/Chrystel Anne/OneDrive/Documents/GitHub/CSOPESY-MO1/SemiMO-DesktopOS/build/CMakeFiles/copy_assets	1bb6d47114064d10
+93	520	8030526476329406	CMakeFiles/SemiMO.dir/src/GUIApplication.cpp.obj	7790710a7599d0e1
+88	621	8030526476272542	CMakeFiles/SemiMO.dir/src/main.cpp.obj	257893ecb0c5b3bb
+102	977	8030526476424676	CMakeFiles/SemiMO.dir/include/glad/glad.c.obj	9b1878fcc0420794
+98	1174	8030526476369453	CMakeFiles/SemiMO.dir/src/Desktop.cpp.obj	498f6ffce6ae3120
+1175	1405	8030526487145611	SemiMO.exe	f6cfe896b7a5d8dc

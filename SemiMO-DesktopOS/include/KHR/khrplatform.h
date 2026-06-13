@@ -48,6 +48,8 @@ typedef khronos_uint32_t khronos_boolean_enum_t;
 
 typedef size_t khronos_usize_t;
 
+typedef ptrdiff_t khronos_ssize_t;
+
 #if defined(_WIN64)
 typedef unsigned long long khronos_uintptr_t;
 typedef long long khronos_intptr_t;
