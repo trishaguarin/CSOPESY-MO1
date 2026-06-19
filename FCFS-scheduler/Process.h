@@ -4,34 +4,91 @@
 #include <fstream>
 #include <mutex>
 #include <ctime>
- 
+#include <sstream>
+#include <iomanip>
+#include <atomic>
+#include <chrono>
+
 class Process {
 public:
     enum ProcessState {
         READY,
         RUNNING,
         FINISHED
-        // may kulang pa ba here na need, "WAITING"?
+        // "WAITING"?
     };
- 
+
     Process(int pid, std::string name, int totalPrints)
         : pid(pid), name(name), totalPrints(totalPrints),
-          printsExecuted(0), state(READY), assignedCore(-1) {}
- 
+          printsExecuted(0), state(READY), assignedCore(-1) {
+
+        auto now = std::chrono::system_clock::now();
+        creationTime = std::chrono::system_clock::to_time_t(now);
+    }
+
     int getPID() const { return pid; }
     std::string getName() const { return name; }
     ProcessState getState() const { return state; }
     int getAssignedCore() const { return assignedCore; }
     int getPrintsExecuted() const { return printsExecuted; }
     int getTotalPrints() const { return totalPrints; }
- 
+    std::time_t getCreationTime() const { return creationTime; }
+
     void setState(ProcessState s) { state = s; }
     void setAssignedCore(int core) { assignedCore = core; }
- 
+
     bool isFinished() const { return printsExecuted >= totalPrints; }
- 
+
+    static std::string getTimestamp() {
+        auto now = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(now);
+        std::tm tm_info;
+#ifdef _WIN32
+        localtime_s(&tm_info, &t);
+#else
+        localtime_r(&t, &tm_info);
+#endif
+        std::ostringstream oss;
+        // 12-hour format with AM/PM
+        int hour = tm_info.tm_hour;
+        const char* ampm = (hour >= 12) ? "PM" : "AM";
+        if (hour == 0)  hour = 12;
+        else if (hour > 12) hour -= 12;
+
+        oss << "(" 
+            << std::setw(2) << std::setfill('0') << (tm_info.tm_mon + 1) << "/"
+            << std::setw(2) << std::setfill('0') << tm_info.tm_mday << "/"
+            << (tm_info.tm_year + 1900) << " "
+            << std::setw(2) << std::setfill('0') << hour << ":"
+            << std::setw(2) << std::setfill('0') << tm_info.tm_min << ":"
+            << std::setw(2) << std::setfill('0') << tm_info.tm_sec
+            << ampm << ")";
+        return oss.str();
+    }
+
+    // Executes one print command: writes to the process's text file
+    // NOTE: Disable file writing for machine project submission (see instructions)
     void executePrint(int coreId) {
-       // TODO: to display the message on screen_01
+        std::lock_guard<std::mutex> lock(fileMutex);
+        std::string timestamp = getTimestamp();
+
+        // ── Write to the process's dedicated text file ──────────────────────
+        // FIXME: change for MP submission, comment out
+        {
+            std::ofstream outFile(name + ".txt", std::ios::app);
+            if (outFile.is_open()) {
+                outFile << timestamp
+                        << "    Core:" << coreId
+                        << "    \"Hello world from " << name << "!\"\n";
+            }
+        }
+        // ── End of file-writing block ────────────────────────────────────────
+
+        printsExecuted++;
+
+        if (printsExecuted >= totalPrints) {
+            state = FINISHED;
+        }
     }
 
 private:
@@ -41,5 +98,6 @@ private:
     int printsExecuted;
     ProcessState state;
     int assignedCore;
-    std::mutex fileMutex;  // protects file writes since multiple cores could finish near the same time
+    std::time_t creationTime;
+    std::mutex fileMutex;  // protects file writes
 };
