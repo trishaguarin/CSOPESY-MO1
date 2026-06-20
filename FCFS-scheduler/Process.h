@@ -29,6 +29,11 @@ public:
 
         if constexpr (enableFileOutput) {
             outFile.open(name + ".txt", std::ios::app);
+            if (outFile.is_open()) {
+                outFile << "Process name: " << name << "\n";
+                outFile << "Logs:" << "\n\n";
+                outFile.flush();
+            }
         }
     }
 
