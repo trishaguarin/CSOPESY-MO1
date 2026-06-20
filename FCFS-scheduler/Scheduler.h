@@ -28,10 +28,18 @@ public:
     }
 
     // add process to queue
-    void addProcess(std::shared_ptr<Process> p) {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        readyQueue.push(p);
-        allProcesses.push_back(p);
+    void addProcess(std::shared_ptr<Process> p)
+    {
+        {
+            std::lock_guard<std::mutex> lock(queueMutex);
+            readyQueue.push(p);
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(listMutex);
+            allProcesses.push_back(p);
+        }
+
         cv.notify_all();
     }
 
@@ -99,20 +107,39 @@ private:
 
             if (!running) break;
 
-            while (!readyQueue.empty() && hasIdleCore()) {
-                int core = getIdleCore();
+            while (!readyQueue.empty())
+            {
                 auto proc = readyQueue.front();
                 readyQueue.pop();
 
+                int core = -1;
+
                 {
                     std::lock_guard<std::mutex> lk(coreMutex);
-                    coreStatus[core] = true;       // mark core ads busy
+
+                    for (int i = 0; i < numCores; ++i)
+                    {
+                        if (!coreStatus[i])
+                        {
+                            core = i;
+                            coreStatus[i] = true;   // reserve immediately
+                            break;
+                        }
+                    }
+
+                    if (core == -1)
+                    {
+                        readyQueue.push(proc);  // put process back
+                        break;
+                    }
+
                     coreProcess[core] = proc;
                 }
 
                 proc->setState(Process::RUNNING);
                 proc->setAssignedCore(core);
-                coreCV.notify_all();               // wake that core's worker
+
+                coreCV.notify_all();
             }
         }
     }
@@ -150,12 +177,24 @@ private:
 
     // HELPERS ---
     bool hasIdleCore() const {
-        for (bool busy : coreStatus) if (!busy) return true;
+        std::lock_guard<std::mutex> lock(coreMutex);
+
+        for (bool busy : coreStatus) {
+            if (!busy)
+                return true;
+        }
+
         return false;
     }
 
     int getIdleCore() const {
-        for (int i = 0; i < numCores; ++i) if (!coreStatus[i]) return i;
+        std::lock_guard<std::mutex> lock(coreMutex);
+
+        for (int i = 0; i < numCores; ++i) {
+            if (!coreStatus[i])
+                return i;
+        }
+
         return -1;
     }
 

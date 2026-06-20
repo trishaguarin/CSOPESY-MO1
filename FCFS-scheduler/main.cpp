@@ -110,7 +110,7 @@ int main() {
         std::string name = oss.str();
 
         processCreationTime[name] = nowTimestamp();
-
+        { std::ofstream clearFile(name + ".txt", std::ios::trunc); } // clear file -> added this line
         auto proc = std::make_shared<Process>(i, name, PRINTS_PER_PROCESS);
         scheduler.addProcess(proc);
     }

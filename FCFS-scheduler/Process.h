@@ -28,16 +28,16 @@ public:
 
     int getPID() const { return pid; }
     std::string getName() const { return name; }
-    ProcessState getState() const { return state; }
-    int getAssignedCore() const { return assignedCore; }
-    int getPrintsExecuted() const { return printsExecuted; }
+    ProcessState getState() const { return state.load(); }
+    int getAssignedCore() const { return assignedCore.load(); }
+    int getPrintsExecuted() const { return printsExecuted.load(); }
     int getTotalPrints() const { return totalPrints; }
     std::time_t getCreationTime() const { return creationTime; }
 
-    void setState(ProcessState s) { state = s; }
-    void setAssignedCore(int core) { assignedCore = core; }
+    void setState(ProcessState s) { state.store(s); }
+    void setAssignedCore(int core) { assignedCore.store(core); }
 
-    bool isFinished() const { return printsExecuted >= totalPrints; }
+    bool isFinished() const { return printsExecuted.load() >= totalPrints; }
 
     static std::string getTimestamp() {
         auto now = std::chrono::system_clock::now();
@@ -66,8 +66,8 @@ public:
     }
     
     void executePrint(int coreId) {
-        std::lock_guard<std::mutex> lock(fileMutex);
         std::string timestamp = getTimestamp();
+        std::lock_guard<std::mutex> lock(fileMutex); //pinagbaliktad ko ^^
 
         // FIXME: change for MP submission, comment out
         {
@@ -81,8 +81,8 @@ public:
 
         printsExecuted++;
 
-        if (printsExecuted >= totalPrints) {
-            state = FINISHED;
+        if (printsExecuted.load() >= totalPrints) {
+            state.store(FINISHED);
         }
     }
 
@@ -90,9 +90,9 @@ private:
     int pid;
     std::string name;
     int totalPrints;
-    int printsExecuted;
-    ProcessState state;
-    int assignedCore;
+    std::atomic<int> printsExecuted;
+    std::atomic<ProcessState> state;
+    std::atomic<int> assignedCore;
     std::time_t creationTime;
     std::mutex fileMutex;  // protects file writes
 };
