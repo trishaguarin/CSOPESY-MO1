@@ -1,4 +1,5 @@
 #pragma once
+#include "Config.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -8,6 +9,7 @@
 #include <iomanip>
 #include <atomic>
 #include <chrono>
+#include <thread>
 
 class Process {
 public:
@@ -24,6 +26,16 @@ public:
 
         auto now = std::chrono::system_clock::now();
         creationTime = std::chrono::system_clock::to_time_t(now);
+
+        if constexpr (enableFileOutput) {
+            outFile.open(name + ".txt", std::ios::app);
+        }
+    }
+
+    ~Process() {
+        if constexpr (enableFileOutput) {
+            if (outFile.is_open()) outFile.close();
+        }
     }
 
     int getPID() const { return pid; }
@@ -67,26 +79,29 @@ public:
     
     void executePrint(int coreId) {
         std::string timestamp = getTimestamp();
-        std::lock_guard<std::mutex> lock(fileMutex); //pinagbaliktad ko ^^
+        std::lock_guard<std::mutex> lock(fileMutex);
 
-        // FIXME: change for MP submission, comment out
-        {
-            std::ofstream outFile(name + ".txt", std::ios::app);
+        if constexpr (enableFileOutput) {
             if (outFile.is_open()) {
                 outFile << timestamp
                         << "    Core:" << coreId
                         << "    \"Hello world from " << name << "!\"\n";
+                outFile.flush();
             }
         }
 
-        printsExecuted++;
-
-        if (printsExecuted.load() >= totalPrints) {
+        int newCount = ++printsExecuted; // pre-increment captures new value
+        if (newCount >= totalPrints) {
             state.store(FINISHED);
         }
+
+        // Temporary recording slowdown from config.
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(settings::PRINT_DELAY_MS));
     }
 
 private:
+    static constexpr bool enableFileOutput = true;
     int pid;
     std::string name;
     int totalPrints;
@@ -95,4 +110,5 @@ private:
     std::atomic<int> assignedCore;
     std::time_t creationTime;
     std::mutex fileMutex;  // protects file writes
+    std::ofstream outFile; // kept open for the lifetime of the process
 };

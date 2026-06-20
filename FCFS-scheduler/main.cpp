@@ -11,13 +11,14 @@
 #include <atomic>
 #include <queue>
 #include <condition_variable>
+#include "Config.h"
 #include "Process.h"
 #include "Scheduler.h"
 
 // CONSTANTS ---
-const int NUM_CORES          = 4;
-const int NUM_PROCESSES      = 10;
-const int PRINTS_PER_PROCESS = 100;
+static constexpr int NUM_CORES          = settings::CORE_COUNT;
+static constexpr int NUM_PROCESSES      = settings::PROCESS_COUNT;
+static constexpr int PRINTS_PER_PROCESS = settings::PRINTS_PER_PROCESS;
 
 // HELPER FUNCS ---
 

@@ -58,6 +58,7 @@ public:
     void stop() {
         running = false;
         cv.notify_all();
+        coreCV.notify_all();
         if (schedulerThread.joinable()) schedulerThread.join();
         for (auto& t : coreThreads) {
             if (t.joinable()) t.join();
@@ -107,39 +108,33 @@ private:
 
             if (!running) break;
 
-            while (!readyQueue.empty())
-            {
+            while (!readyQueue.empty()) {
+                // Peek at the next process but don't pop until a core is reserved.
                 auto proc = readyQueue.front();
-                readyQueue.pop();
 
                 int core = -1;
-
                 {
                     std::lock_guard<std::mutex> lk(coreMutex);
-
-                    for (int i = 0; i < numCores; ++i)
-                    {
-                        if (!coreStatus[i])
-                        {
+                    for (int i = 0; i < numCores; ++i) {
+                        if (!coreStatus[i]) {
                             core = i;
-                            coreStatus[i] = true;   // reserve immediately
+                            coreStatus[i] = true; // reserve immediately
+                            coreProcess[core] = proc;
                             break;
                         }
                     }
-
-                    if (core == -1)
-                    {
-                        readyQueue.push(proc);  // put process back
-                        break;
-                    }
-
-                    coreProcess[core] = proc;
                 }
 
+                if (core == -1) {
+                    break;
+                }
+
+                // We reserved a core for the front process, now pop it and start it.
+                readyQueue.pop();
                 proc->setState(Process::RUNNING);
                 proc->setAssignedCore(core);
 
-                coreCV.notify_all();
+                coreCV.notify_one();
             }
         }
     }
