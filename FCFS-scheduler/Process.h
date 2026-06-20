@@ -49,7 +49,6 @@ public:
         localtime_r(&t, &tm_info);
 #endif
         std::ostringstream oss;
-        // 12-hour format with AM/PM
         int hour = tm_info.tm_hour;
         const char* ampm = (hour >= 12) ? "PM" : "AM";
         if (hour == 0)  hour = 12;
@@ -65,14 +64,11 @@ public:
             << ampm << ")";
         return oss.str();
     }
-
-    // Executes one print command: writes to the process's text file
-    // NOTE: Disable file writing for machine project submission (see instructions)
+    
     void executePrint(int coreId) {
         std::lock_guard<std::mutex> lock(fileMutex);
         std::string timestamp = getTimestamp();
 
-        // ── Write to the process's dedicated text file ──────────────────────
         // FIXME: change for MP submission, comment out
         {
             std::ofstream outFile(name + ".txt", std::ios::app);
@@ -82,7 +78,6 @@ public:
                         << "    \"Hello world from " << name << "!\"\n";
             }
         }
-        // ── End of file-writing block ────────────────────────────────────────
 
         printsExecuted++;
 

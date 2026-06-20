@@ -11,9 +11,10 @@
 #include "Process.h"
 
 // First-Come-First-Serve (FCFS) Scheduler
-// Multi-threaded design:
-//   • 1 dedicated scheduler thread  – dispatches processes from the ready queue to free cores
-//   • 1 worker thread per CPU core  – executes print commands for the assigned process
+// a scheduler thread assigns processes to the worker threads
+// a worker thread is assigned per CPU core, prints commands
+// whenever a core is free, the worker thread notifies the scheduler to assign the next process
+// repeats until queue is empty
 
 class Scheduler {
 public:
@@ -26,7 +27,7 @@ public:
         stop();
     }
 
-    // Add a process to the scheduler before or after start()
+    // add process to queue
     void addProcess(std::shared_ptr<Process> p) {
         std::lock_guard<std::mutex> lock(queueMutex);
         readyQueue.push(p);
@@ -37,12 +38,12 @@ public:
     void start() {
         running = true;
 
-        // Spawn one worker thread per core
+        // make worker thread per core
         for (int i = 0; i < numCores; ++i) {
             coreThreads.emplace_back(&Scheduler::coreWorker, this, i);
         }
 
-        // Spawn the scheduler thread
+        // makes scheduler thread
         schedulerThread = std::thread(&Scheduler::schedulerWorker, this);
     }
 
@@ -64,9 +65,8 @@ public:
             });
     }
 
-    // ── Display helpers ──────────────────────────────────────────────────────
-
-    // Collect running processes (snapshot)
+    // HELPER FOR UI ---
+    // running
     std::vector<std::shared_ptr<Process>> getRunningProcesses() const {
         std::lock_guard<std::mutex> lock(listMutex);
         std::vector<std::shared_ptr<Process>> result;
@@ -76,7 +76,7 @@ public:
         return result;
     }
 
-    // Collect finished processes (snapshot)
+    // finished
     std::vector<std::shared_ptr<Process>> getFinishedProcesses() const {
         std::lock_guard<std::mutex> lock(listMutex);
         std::vector<std::shared_ptr<Process>> result;
@@ -89,7 +89,7 @@ public:
     int getNumCores() const { return numCores; }
 
 private:
-    // ── Scheduler thread: dispatches ready processes to idle cores ───────────
+    // scheduler thread, assigns processes to cores
     void schedulerWorker() {
         while (running) {
             std::unique_lock<std::mutex> lock(queueMutex);
@@ -106,7 +106,7 @@ private:
 
                 {
                     std::lock_guard<std::mutex> lk(coreMutex);
-                    coreStatus[core] = true;       // mark core busy
+                    coreStatus[core] = true;       // mark core ads busy
                     coreProcess[core] = proc;
                 }
 
@@ -117,12 +117,12 @@ private:
         }
     }
 
-    // ── Core worker thread: runs the process assigned to this core ───────────
+    // worker thread, executes prints
     void coreWorker(int coreId) {
         while (running) {
             std::shared_ptr<Process> proc;
 
-            // Wait until this core has a process assigned
+            // wait until a process is asigned
             {
                 std::unique_lock<std::mutex> lock(coreMutex);
                 coreCV.wait(lock, [this, coreId] {
@@ -132,14 +132,13 @@ private:
                 proc = coreProcess[coreId];
             }
 
-            // Execute all remaining print commands for this process
+            // execute prints
             while (proc && !proc->isFinished()) {
                 proc->executePrint(coreId);
-                // Tiny yield to keep the system responsive; remove if not needed
                 std::this_thread::yield();
             }
 
-            // Core is now free — notify scheduler
+            // core is free, notify scheduler
             {
                 std::lock_guard<std::mutex> lock(coreMutex);
                 coreStatus[coreId] = false;
@@ -149,7 +148,7 @@ private:
         }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // HELPERS ---
     bool hasIdleCore() const {
         for (bool busy : coreStatus) if (!busy) return true;
         return false;
@@ -160,7 +159,7 @@ private:
         return -1;
     }
 
-    // ── Member data ──────────────────────────────────────────────────────────
+    // ATTRIBUTES NG SCHEDULER ---
     int numCores;
     std::atomic<bool> running;
 

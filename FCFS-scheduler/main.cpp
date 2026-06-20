@@ -14,21 +14,20 @@
 #include "Process.h"
 #include "Scheduler.h"
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// CONSTANTS ---
 const int NUM_CORES          = 4;
 const int NUM_PROCESSES      = 10;
 const int PRINTS_PER_PROCESS = 100;
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// HELPER FUNCS ---
 
-// Store each process's creation timestamp string so the list display is stable
+// for process creation timestamps
 std::map<std::string, std::string> processCreationTime;
-
 std::string nowTimestamp() {
     return Process::getTimestamp();
 }
 
-void printHeader() {
+void printHeader() { // header for UI
     std::cout << R"(
 
 	 _______  _______  _______  _______  _______  _______  __   __ 
@@ -44,20 +43,19 @@ void printHeader() {
     std::cout << "------------------------------------------------------------\n\n";
 }
 
-// Mimics the reference UI layout from the homework spec
+// UI printer
 void printProcessList(Scheduler& scheduler) {
     auto running  = scheduler.getRunningProcesses();
     auto finished = scheduler.getFinishedProcesses();
 
     std::cout << "\n------------------------------------------------------------\n";
 
-    // ── Running processes ────────────────────────────────────────────────────
+    // RUNNING
     std::cout << "Running processes:\n";
     if (running.empty()) {
         std::cout << "  (none)\n";
     } else {
-        for (auto& p : running) {
-            // Timestamp: use stored creation time
+        for (auto& p : running) {   
             std::string ts = processCreationTime.count(p->getName())
                              ? processCreationTime[p->getName()]
                              : nowTimestamp();
@@ -74,7 +72,7 @@ void printProcessList(Scheduler& scheduler) {
 
     std::cout << "\n";
 
-    // ── Finished processes ───────────────────────────────────────────────────
+    // FINISHED
     std::cout << "Finished processes:\n";
     if (finished.empty()) {
         std::cout << "  (none)\n";
@@ -103,7 +101,7 @@ int main() {
 
     Scheduler scheduler(NUM_CORES);
 
-    // ── Step 1: Create 10 processes with 100 print commands each ─────────────
+    // CREATING PROCESSES ---
     std::cout << "Initialising " << NUM_PROCESSES << " processes...\n\n";
     for (int i = 1; i <= NUM_PROCESSES; ++i) {
         // Name: process01, process02, …, process10
@@ -111,25 +109,23 @@ int main() {
         oss << "process" << std::setw(2) << std::setfill('0') << i;
         std::string name = oss.str();
 
-        // Record creation timestamp (stable reference for the list display)
         processCreationTime[name] = nowTimestamp();
 
         auto proc = std::make_shared<Process>(i, name, PRINTS_PER_PROCESS);
         scheduler.addProcess(proc);
     }
 
-    // ── Step 2: Start the scheduler (launches scheduler + core threads) ───────
+    // STARTING SCHEDULER ---
     scheduler.start();
     std::cout << "Scheduler started with " << NUM_CORES << " cores.\n";
     std::cout << "All " << NUM_PROCESSES << " processes queued.\n\n";
 
-    // ── Step 3: Command loop ──────────────────────────────────────────────────
+    // MAIN PROGRAM LOOP ---
     std::string input;
     while (true) {
         std::cout << "> ";
-        if (!std::getline(std::cin, input)) break;   // EOF / pipe closed
+        if (!std::getline(std::cin, input)) break; 
 
-        // Trim leading/trailing whitespace
         auto trim = [](std::string s) {
             s.erase(0, s.find_first_not_of(" \t\r\n"));
             s.erase(s.find_last_not_of(" \t\r\n") + 1);
