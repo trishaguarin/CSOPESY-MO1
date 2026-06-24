@@ -1,0 +1,26 @@
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.obj
+*.pdb
+
+# Build directories
+build/
+cmake-build-*/
+
+# IDE files
+.vscode/
+.vs/
+*.suo
+*.user
+
+# Output files (generated at runtime)
+csopesy-log.txt
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Old semi-MO artifacts (kept on their respective branches)
+*.ini
