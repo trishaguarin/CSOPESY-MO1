@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // Scheduler.h — CPU Scheduler (FCFS & Round-Robin)
 // ============================================================================
 // MO1 REQUIREMENT: The scheduler (page 4-5)
@@ -43,11 +43,11 @@
 #include <queue>
 #include <vector>
 #include <map>
+#include <memory>
+#include <atomic>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <memory>
-#include <atomic>
 
 class Scheduler
 {
@@ -109,23 +109,31 @@ private:
     //   - Human-readable name (p01, p02, ..., p1240)
     //   - Random instruction count between min-ins and max-ins
     //   - Randomized instruction types
-    // std::shared_ptr<Process> generateProcess();
+    std::shared_ptr<Process> generateProcess();
+    bool hasIdleCore() const;
+    int  getIdleCore() const;
 
-    // ── Configuration ────────────────────────────────────────────────────
+    // ── Configuration ───────────────────────────────────────────────────
     SystemConfig config;
 
-    // ── State ────────────────────────────────────────────────────────────
+    // ── State ───────────────────────────────────────────────────────────
     std::atomic<bool>     running{false};
     std::atomic<bool>     batchGenerating{false};
     std::atomic<uint64_t> cpuTickCounter{0};
+
+    // ── Threading ────────────────────────────────────────────────────────
+    std::thread              schedulerThread;
+    std::vector<std::thread> coreThreads;
 
     // ── Process Queues ───────────────────────────────────────────────────
     std::queue<std::shared_ptr<Process>>   readyQueue;
     std::vector<std::shared_ptr<Process>>  allProcesses;
 
-    // ── Threading ────────────────────────────────────────────────────────
-    std::thread              schedulerThread;
-    std::vector<std::thread> coreThreads;
+    mutable std::mutex              queueMutex;
+    mutable std::mutex              listMutex;
+    mutable std::mutex              coreMutex;
+    std::condition_variable         schedulerCV;
+    std::condition_variable         coreCV;
 
     // ── Per-Core State ───────────────────────────────────────────────────
     std::vector<bool>                              coreStatus;   // true = busy
@@ -134,13 +142,6 @@ private:
     // TODO: For Round-Robin — track how many ticks each core has run
     //   its current process (for quantum preemption)
     // std::map<int, uint32_t> coreTicksUsed;
-
-    // ── Synchronization ──────────────────────────────────────────────────
-    mutable std::mutex       queueMutex;
-    mutable std::mutex       listMutex;
-    mutable std::mutex       coreMutex;
-    std::condition_variable  schedulerCV;
-    std::condition_variable  coreCV;
 
     // ── Batch generation ─────────────────────────────────────────────────
     int processCounter = 0; // for naming: p01, p02, ...

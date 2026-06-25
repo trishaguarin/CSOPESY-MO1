@@ -51,7 +51,7 @@ private:
 
     // Owned subsystem pointers
     std::unique_ptr<ConfigParser>    configParser;
-    // std::unique_ptr<Scheduler>       scheduler;
+    std::unique_ptr<Scheduler>       scheduler;
     // std::unique_ptr<ScreenManager>   screenManager;
     // std::unique_ptr<ReportGenerator> reportGenerator;
 };

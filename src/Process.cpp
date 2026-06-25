@@ -14,6 +14,37 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip>
+#include <cctype>
+#include <cstring>
+
+static uint16_t resolveOperand(const std::string& token,
+                               const std::map<std::string, uint16_t>& store)
+{
+    if (token.empty())
+        return 0;
+
+    bool isNumber = true;
+    for (char c : token)
+    {
+        if (!std::isdigit(static_cast<unsigned char>(c)))
+        {
+            isNumber = false;
+            break;
+        }
+    }
+
+    if (isNumber)
+    {
+        unsigned long value = std::stoul(token);
+        return static_cast<uint16_t>(value > 0xFFFFu ? 0xFFFFu : value);
+    }
+
+    auto it = store.find(token);
+    if (it != store.end())
+        return it->second;
+
+    return 0;
+}
 
 Process::Process(int pid, const std::string& name,
                  const std::vector<Instruction>& instructions)
@@ -43,69 +74,91 @@ void Process::setAssignedCore(int core) { assignedCore.store(core); }
 // ── Execution ────────────────────────────────────────────────────────────────
 bool Process::executeNextInstruction(int coreId)
 {
-    std::lock_guard<std::mutex> lock(processMutex);
+    if (state.load() == FINISHED)
+        return false;
 
-    // TODO: Implement instruction execution
-    //
-    // Pseudocode:
-    //   if (instructionPointer >= instructions.size()) {
-    //       state = FINISHED;
-    //       return false;
-    //   }
-    //
-    //   auto& instr = instructions[instructionPointer];
-    //   switch (instr.type) {
-    //       case InstructionType::PRINT:
-    //           // Append to outputLog: timestamp + core + msg
-    //           // Default msg: "Hello world from <name>!"
-    //           // If msg contains a variable reference, resolve from variableStore
-    //           break;
-    //
-    //       case InstructionType::DECLARE:
-    //           // variableStore[instr.varName] = instr.value;
-    //           break;
-    //
-    //       case InstructionType::ADD:
-    //           // Resolve operand1 and operand2 (variable name → value, or literal)
-    //           // variableStore[instr.varName] = clamp(op1 + op2, 0, 65535);
-    //           // Auto-declare if variable not found (default 0)
-    //           break;
-    //
-    //       case InstructionType::SUBTRACT:
-    //           // Same as ADD but subtraction
-    //           // Clamp to [0, 65535]
-    //           break;
-    //
-    //       case InstructionType::SLEEP:
-    //           // sleepTicksRemaining = instr.sleepTicks;
-    //           // state = WAITING;
-    //           // return true; (process gives up CPU)
-    //           break;
-    //
-    //       case InstructionType::FOR:
-    //           // Push onto forStack: {current instructionPointer, 0, instr.repeatCount}
-    //           // On each iteration, execute body instructions
-    //           // When iterations complete, pop from forStack
-    //           // Max nesting depth: 3
-    //           break;
-    //   }
-    //
-    //   instructionPointer++;
-    //   return true;
+    if (instructionPointer >= static_cast<int>(instructions.size()))
+    {
+        state = FINISHED;
+        return false;
+    }
 
-    return false; // stub
+    const Instruction& instr = instructions[instructionPointer];
+    switch (instr.type)
+    {
+        case InstructionType::PRINT:
+        {
+            std::string text = instr.msg.empty()
+                ? "Hello world from " + name + "!"
+                : instr.msg;
+
+            std::ostringstream oss;
+            oss << getTimestamp() << " [Core " << coreId << "] " << text;
+            outputLog.push_back(oss.str());
+            break;
+        }
+
+        case InstructionType::DECLARE:
+            variableStore[instr.varName] = instr.value;
+            break;
+
+        case InstructionType::ADD:
+        {
+            uint16_t left = resolveOperand(instr.operand1, variableStore);
+            uint16_t right = resolveOperand(instr.operand2, variableStore);
+            uint32_t sum = static_cast<uint32_t>(left) + static_cast<uint32_t>(right);
+            variableStore[instr.varName] = static_cast<uint16_t>(sum > 0xFFFFu ? 0xFFFFu : sum);
+            break;
+        }
+
+        case InstructionType::SUBTRACT:
+        {
+            uint16_t left = resolveOperand(instr.operand1, variableStore);
+            uint16_t right = resolveOperand(instr.operand2, variableStore);
+            int32_t diff = static_cast<int32_t>(left) - static_cast<int32_t>(right);
+            variableStore[instr.varName] = static_cast<uint16_t>(diff < 0 ? 0 : diff);
+            break;
+        }
+
+        case InstructionType::SLEEP:
+            sleepTicksRemaining = static_cast<int>(instr.sleepTicks);
+            state = WAITING;
+            instructionPointer++;
+            return true;
+
+        case InstructionType::FOR:
+            // TODO: Implement FOR loop execution
+            break;
+    }
+
+    instructionPointer++;
+    if (instructionPointer >= static_cast<int>(instructions.size()))
+        state = FINISHED;
+
+    return true;
 }
 
 // ── Sleep Tick ───────────────────────────────────────────────────────────────
 void Process::tickSleep()
 {
-    // TODO: Decrement sleepTicksRemaining
-    //   if (sleepTicksRemaining > 0) {
-    //       sleepTicksRemaining--;
-    //       if (sleepTicksRemaining == 0) {
-    //           state = READY; // wake up, go back to ready queue
-    //       }
-    //   }
+    if (sleepTicksRemaining > 0)
+    {
+        sleepTicksRemaining--;
+        if (sleepTicksRemaining == 0 && state.load() == WAITING)
+        {
+            state = READY;
+        }
+    }
+}
+
+std::string Process::getOutputLog() const
+{
+    std::ostringstream oss;
+    for (const auto& line : outputLog)
+    {
+        oss << line << '\n';
+    }
+    return oss.str();
 }
 
 // ── Timestamp (reused from old Process.h) ────────────────────────────────────
@@ -114,11 +167,15 @@ std::string Process::getTimestamp()
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm tm_info;
-#ifdef _WIN32
-    localtime_s(&tm_info, &t);
-#else
-    localtime_r(&t, &tm_info);
-#endif
+    std::tm* tm_ptr = std::localtime(&t);
+    if (tm_ptr)
+    {
+        tm_info = *tm_ptr;
+    }
+    else
+    {
+        std::memset(&tm_info, 0, sizeof(tm_info));
+    }
     std::ostringstream oss;
     int hour = tm_info.tm_hour;
     const char* ampm = (hour >= 12) ? "PM" : "AM";

@@ -32,7 +32,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <mutex>
 #include <atomic>
 #include <ctime>
 #include <fstream>
@@ -86,7 +85,7 @@ public:
     // ── Logging ──────────────────────────────────────────────────────────
     // TODO: Get the output log for process-smi display
     //   Returns the accumulated PRINT outputs for this process
-    // std::string getOutputLog() const;
+    std::string getOutputLog() const;
 
     // ── Timestamp helper (reused from old Process.h) ─────────────────────
     static std::string getTimestamp();
@@ -105,10 +104,10 @@ private:
     // TODO: Variable store for DECLARE/ADD/SUBTRACT
     //   - Auto-declare with value 0 if not found
     //   - Clamp to [0, 65535]
-    // std::map<std::string, uint16_t> variableStore;
+    std::map<std::string, uint16_t> variableStore;
 
     // TODO: Sleep tracking
-    // int sleepTicksRemaining = 0;
+    int sleepTicksRemaining = 0;
 
     // TODO: FOR loop state tracking
     //   Need a stack of {loop start index, current iteration, max iterations}
@@ -117,7 +116,5 @@ private:
     // std::vector<ForLoopState> forStack;
 
     // TODO: Output log buffer (for process-smi display)
-    // std::vector<std::string> outputLog;
-
-    std::mutex processMutex; // thread safety
+    std::vector<std::string> outputLog;
 };

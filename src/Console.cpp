@@ -16,7 +16,7 @@
 
 #include "Console.h"
 #include "ConfigParser.h"
-// #include "Scheduler.h"
+#include "Scheduler.h"
 // #include "ScreenManager.h"
 // #include "ReportGenerator.h"
 
@@ -176,8 +176,11 @@ void Console::cmdInitialize()
     std::cout << "  max-ins: " << config.maxIns << "\n";
     std::cout << "  delays-per-exec: " << config.delaysPerExec << "\n";
 
+    scheduler = std::make_unique<Scheduler>(config);
+    scheduler->start();
+
     initialized = true;
-    std::cout << "System initialized.\n";
+    std::cout << "System initialized. Scheduler started.\n";
 }
 
 // MO1 REQUIREMENT: screen command support
@@ -237,7 +240,15 @@ void Console::cmdSchedulerStart()
     //   - Generates processes with randomized instructions
     //   - Instruction count between min-ins and max-ins
     //   - Process names: p01, p02, ..., p1240, etc.
-    std::cout << "'scheduler-start' — TODO: Start batch generation.\n";
+    if (scheduler)
+    {
+        scheduler->startBatchGeneration();
+        std::cout << "Batch generation started.\n";
+    }
+    else
+    {
+        std::cout << "Scheduler unavailable.\n";
+    }
 }
 
 // MO1 REQUIREMENT: scheduler-stop
@@ -246,7 +257,15 @@ void Console::cmdSchedulerStop()
 {
     // TODO: Stop the batch process generation loop
     //   scheduler->stopBatchGeneration();
-    std::cout << "'scheduler-stop' — TODO: Stop batch generation.\n";
+    if (scheduler)
+    {
+        scheduler->stopBatchGeneration();
+        std::cout << "Batch generation stopped.\n";
+    }
+    else
+    {
+        std::cout << "Scheduler unavailable.\n";
+    }
 }
 
 // MO1 REQUIREMENT: report-util

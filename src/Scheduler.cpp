@@ -14,10 +14,13 @@
 
 #include "Scheduler.h"
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <random>
+#include <thread>
+#include <mutex>
 
 Scheduler::Scheduler(const SystemConfig& config)
     : config(config)
@@ -35,13 +38,9 @@ Scheduler::~Scheduler()
 void Scheduler::start()
 {
     running = true;
-
-    // TODO: Launch core worker threads (one per CPU core)
-    //   for (int i = 0; i < config.numCpu; ++i)
-    //       coreThreads.emplace_back(&Scheduler::coreWorker, this, i);
-
-    // TODO: Launch the scheduler loop thread
-    //   schedulerThread = std::thread(&Scheduler::schedulerLoop, this);
+    schedulerThread = std::thread(&Scheduler::schedulerLoop, this);
+    for (int i = 0; i < config.numCpu; ++i)
+        coreThreads.emplace_back(&Scheduler::coreWorker, this, i);
 }
 
 void Scheduler::stop()
@@ -51,9 +50,12 @@ void Scheduler::stop()
     schedulerCV.notify_all();
     coreCV.notify_all();
 
-    if (schedulerThread.joinable()) schedulerThread.join();
+    if (schedulerThread.joinable())
+        schedulerThread.join();
+
     for (auto& t : coreThreads)
-        if (t.joinable()) t.join();
+        if (t.joinable())
+            t.join();
     coreThreads.clear();
 }
 
@@ -69,7 +71,7 @@ void Scheduler::addProcess(std::shared_ptr<Process> proc)
         std::lock_guard<std::mutex> lock(listMutex);
         allProcesses.push_back(proc);
     }
-    schedulerCV.notify_all();
+    // TODO: Notify scheduler loop when a new process is added.
 }
 
 // ── Batch Generation ─────────────────────────────────────────────────────────
@@ -79,11 +81,13 @@ void Scheduler::startBatchGeneration()
     // TODO: Set batchGenerating = true
     //   The schedulerLoop should check this flag and generate a new process
     //   every config.batchProcessFreq CPU ticks.
+    // DONE: Batch generation enabled
     batchGenerating = true;
 }
 
 void Scheduler::stopBatchGeneration()
 {
+    // DONE: Batch generation disabled
     batchGenerating = false;
 }
 
@@ -119,7 +123,6 @@ int Scheduler::getNumCores() const { return config.numCpu; }
 
 int Scheduler::getCoresUsed() const
 {
-    std::lock_guard<std::mutex> lock(coreMutex);
     return static_cast<int>(std::count(coreStatus.begin(), coreStatus.end(), true));
 }
 
@@ -133,6 +136,7 @@ float Scheduler::getCpuUtilization() const
     // TODO: Calculate CPU utilization
     //   Simple approach: (cores used / total cores) * 100
     //   Better approach: track cumulative busy ticks / total ticks per core
+    // DONE: Simple utilization calculation implemented
     int used = getCoresUsed();
     if (config.numCpu == 0) return 0.0f;
     return (static_cast<float>(used) / config.numCpu) * 100.0f;
@@ -143,118 +147,170 @@ uint64_t Scheduler::getCpuTicks() const
     return cpuTickCounter.load();
 }
 
+std::shared_ptr<Process> Scheduler::generateProcess()
+{
+    static thread_local std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> instructionCount(config.minIns, config.maxIns);
+    std::uniform_int_distribution<int> opcode(0, 2);
+    std::uniform_int_distribution<int> sleepValue(1, 3);
+
+    ++processCounter;
+    std::ostringstream name;
+    name << "p" << std::setw(2) << std::setfill('0') << processCounter;
+    std::vector<Instruction> instructions;
+    int count = instructionCount(rng);
+    for (int i = 0; i < count; ++i)
+    {
+        switch (opcode(rng))
+        {
+            case 0:
+                instructions.push_back(Instruction::makePrint("Hello world from " + name.str() + "!"));
+                break;
+            case 1:
+                instructions.push_back(Instruction::makeSleep(static_cast<uint32_t>(sleepValue(rng))));
+                break;
+            default:
+                instructions.push_back(Instruction::makeAdd("x", "1", "2"));
+                break;
+        }
+    }
+
+    return std::make_shared<Process>(processCounter, name.str(), instructions);
+}
+
+bool Scheduler::hasIdleCore() const
+{
+    for (bool busy : coreStatus)
+    {
+        if (!busy)
+            return true;
+    }
+    return false;
+}
+
+int Scheduler::getIdleCore() const
+{
+    for (int i = 0; i < static_cast<int>(coreStatus.size()); ++i)
+    {
+        if (!coreStatus[i])
+            return i;
+    }
+    return -1;
+}
+
 // ── Scheduler Loop ───────────────────────────────────────────────────────────
 
 void Scheduler::schedulerLoop()
 {
-    // TODO: Implement the main scheduling loop
-    //
-    // REFERENCE pseudocode from MO1SPECS (page 5):
-    //   while (running) {
-    //       cpuTick++;
-    //       // ... schedule ...
-    //   }
-    //
-    // Detailed pseudocode:
-    //
-    //   while (running) {
-    //       cpuTickCounter++;
-    //
-    //       // ── Batch generation ──
-    //       if (batchGenerating && cpuTickCounter % config.batchProcessFreq == 0) {
-    //           auto proc = generateProcess();
-    //           addProcess(proc);
-    //       }
-    //
-    //       // ── Handle sleeping processes ──
-    //       // For each process in WAITING state, call tickSleep()
-    //       // If it wakes up (WAITING → READY), re-add to readyQueue
-    //
-    //       // ── FCFS: Assign ready processes to idle cores ──
-    //       if (config.schedulerAlgo == "fcfs") {
-    //           while (!readyQueue.empty() && hasIdleCore()) {
-    //               auto proc = readyQueue.front();
-    //               readyQueue.pop();
-    //               int core = getIdleCore();
-    //               coreStatus[core] = true;
-    //               coreProcess[core] = proc;
-    //               proc->setState(Process::RUNNING);
-    //               proc->setAssignedCore(core);
-    //               coreCV.notify_all();
-    //           }
-    //       }
-    //
-    //       // ── RR: Same as FCFS but also check quantum preemption ──
-    //       if (config.schedulerAlgo == "rr") {
-    //           // For each busy core:
-    //           //   if coreTicksUsed[core] >= config.quantumCycles {
-    //           //       preempt: move process back to readyQueue
-    //           //       coreStatus[core] = false;
-    //           //       coreTicksUsed[core] = 0;
-    //           //   }
-    //           // Then assign from readyQueue same as FCFS
-    //       }
-    //
-    //       // Small sleep to prevent busy-spinning the host CPU
-    //       // std::this_thread::sleep_for(std::chrono::microseconds(100));
-    //   }
+    while (running)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        uint64_t currentTick = cpuTickCounter.fetch_add(1) + 1;
+
+        if (batchGenerating && config.batchProcessFreq > 0 &&
+            (currentTick % config.batchProcessFreq) == 0)
+        {
+            auto proc = generateProcess();
+            addProcess(proc);
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(listMutex);
+            for (auto& proc : allProcesses)
+            {
+                if (proc->getState() == Process::WAITING)
+                {
+                    proc->tickSleep();
+                }
+            }
+        }
+
+        if (config.schedulerAlgo == "fcfs")
+        {
+            while (true)
+            {
+                std::shared_ptr<Process> proc;
+                {
+                    std::lock_guard<std::mutex> lock(queueMutex);
+                    if (readyQueue.empty())
+                        break;
+                    proc = readyQueue.front();
+                    readyQueue.pop();
+                }
+
+                int core = -1;
+                {
+                    std::lock_guard<std::mutex> lock(coreMutex);
+                    if (!hasIdleCore())
+                    {
+                        std::lock_guard<std::mutex> queueLock(queueMutex);
+                        readyQueue.push(proc);
+                        break;
+                    }
+                    core = getIdleCore();
+                    coreStatus[core] = true;
+                    coreProcess[core] = proc;
+                }
+
+                proc->setState(Process::RUNNING);
+                proc->setAssignedCore(core);
+                coreCV.notify_all();
+            }
+        }
+        else if (config.schedulerAlgo == "rr")
+        {
+            // TODO: Implement RR preemption using quantum-cycles.
+            //       This should requeue processes once their time slice expires.
+        }
+    }
 }
 
 // ── Core Worker ──────────────────────────────────────────────────────────────
 
 void Scheduler::coreWorker(int coreId)
 {
-    // TODO: Implement core worker thread
-    //
-    // REFERENCE: FCFS-scheduler/Scheduler.h coreWorker()
-    //   Old version:
-    //     wait for process assignment → execute prints → signal idle
-    //
-    // New version pseudocode:
-    //
-    //   while (running) {
-    //       // Wait for a process to be assigned to this core
-    //       {
-    //           std::unique_lock<std::mutex> lock(coreMutex);
-    //           coreCV.wait(lock, [&] {
-    //               return !running || (coreStatus[coreId] && coreProcess.count(coreId));
-    //           });
-    //           if (!running) break;
-    //           proc = coreProcess[coreId];
-    //       }
-    //
-    //       // Execute instructions
-    //       while (proc && !proc->isFinished()) {
-    //           // Handle delays-per-exec (busy waiting)
-    //           // The process stays in the CPU but doesn't execute
-    //           // for config.delaysPerExec ticks
-    //           for (uint32_t d = 0; d < config.delaysPerExec; d++) {
-    //               // busy wait — process occupies CPU but does nothing
-    //               // cpuTickCounter is incremented by schedulerLoop
-    //           }
-    //
-    //           // Execute one instruction
-    //           bool executed = proc->executeNextInstruction(coreId);
-    //
-    //           if (proc->getState() == Process::WAITING) {
-    //               // SLEEP instruction — process gives up CPU
-    //               break;
-    //           }
-    //
-    //           // For RR: check if quantum exhausted
-    //           // if (config.schedulerAlgo == "rr") {
-    //           //     coreTicksUsed[coreId]++;
-    //           //     if (coreTicksUsed[coreId] >= config.quantumCycles)
-    //           //         break; // preempted by scheduler
-    //           // }
-    //       }
-    //
-    //       // Core is free — signal scheduler
-    //       {
-    //           std::lock_guard<std::mutex> lock(coreMutex);
-    //           coreStatus[coreId] = false;
-    //           coreProcess.erase(coreId);
-    //       }
-    //       schedulerCV.notify_all();
-    //   }
+    while (running)
+    {
+        std::shared_ptr<Process> proc;
+        {
+            std::unique_lock<std::mutex> lock(coreMutex);
+            coreCV.wait(lock, [&] {
+                return !running || (coreStatus[coreId] && coreProcess.count(coreId));
+            });
+
+            if (!running)
+                break;
+
+            auto it = coreProcess.find(coreId);
+            if (it != coreProcess.end())
+                proc = it->second;
+        }
+
+        if (!proc)
+            continue;
+
+        while (running && proc && !proc->isFinished())
+        {
+            bool executed = proc->executeNextInstruction(coreId);
+            if (!executed)
+                break;
+
+            if (proc->getState() == Process::WAITING)
+                break;
+
+            if (config.schedulerAlgo == "rr")
+            {
+                // TODO: Track per-core quantum usage and preempt when exhausted.
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(coreMutex);
+            coreStatus[coreId] = false;
+            coreProcess.erase(coreId);
+        }
+        schedulerCV.notify_all();
+    }
 }

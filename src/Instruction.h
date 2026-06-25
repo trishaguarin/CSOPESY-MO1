@@ -38,28 +38,73 @@ struct Instruction
 {
     InstructionType type;
 
-    // TODO: Fields for each instruction type. Possible approaches:
-    //
-    // Option A: Tagged union / variant
-    //   Use std::variant or a union with the type enum as discriminant
-    //
-    // Option B: Flat struct with optional fields (simpler)
-    //   std::string msg;                  // PRINT: the message to print
-    //   std::string varName;              // DECLARE/ADD/SUBTRACT: target variable
-    //   std::string operand1;             // ADD/SUBTRACT: second operand (var name or literal)
-    //   std::string operand2;             // ADD/SUBTRACT: third operand (var name or literal)
-    //   uint16_t    value = 0;            // DECLARE: default value
-    //   uint8_t     sleepTicks = 0;       // SLEEP: number of CPU ticks
-    //   std::vector<Instruction> body;    // FOR: nested instructions
-    //   int         repeatCount = 0;      // FOR: number of repetitions
+    std::string msg;
+    std::string varName;
+    std::string operand1;
+    std::string operand2;
+    uint16_t    value = 0;
+    uint32_t    sleepTicks = 0;
+    std::vector<Instruction> body;
+    int         repeatCount = 0;
 
-    // TODO: Static factory methods or a builder for creating instructions
-    //   static Instruction makePrint(const std::string& processName);
-    //   static Instruction makeDeclare(const std::string& var, uint16_t val);
-    //   static Instruction makeAdd(const std::string& dest, const std::string& op1, const std::string& op2);
-    //   static Instruction makeSubtract(const std::string& dest, const std::string& op1, const std::string& op2);
-    //   static Instruction makeSleep(uint8_t ticks);
-    //   static Instruction makeFor(const std::vector<Instruction>& body, int repeats);
+    static Instruction makePrint(const std::string& message = "")
+    {
+        Instruction i;
+        i.type = InstructionType::PRINT;
+        i.msg = message;
+        return i;
+    }
+
+    static Instruction makeDeclare(const std::string& var, uint16_t val)
+    {
+        Instruction i;
+        i.type = InstructionType::DECLARE;
+        i.varName = var;
+        i.value = val;
+        return i;
+    }
+
+    static Instruction makeAdd(const std::string& dest,
+                               const std::string& op1,
+                               const std::string& op2)
+    {
+        Instruction i;
+        i.type = InstructionType::ADD;
+        i.varName = dest;
+        i.operand1 = op1;
+        i.operand2 = op2;
+        return i;
+    }
+
+    static Instruction makeSubtract(const std::string& dest,
+                                    const std::string& op1,
+                                    const std::string& op2)
+    {
+        Instruction i;
+        i.type = InstructionType::SUBTRACT;
+        i.varName = dest;
+        i.operand1 = op1;
+        i.operand2 = op2;
+        return i;
+    }
+
+    static Instruction makeSleep(uint32_t ticks)
+    {
+        Instruction i;
+        i.type = InstructionType::SLEEP;
+        i.sleepTicks = ticks;
+        return i;
+    }
+
+    static Instruction makeFor(const std::vector<Instruction>& bodyInstructions,
+                               int repeats)
+    {
+        Instruction i;
+        i.type = InstructionType::FOR;
+        i.body = bodyInstructions;
+        i.repeatCount = repeats;
+        return i;
+    }
 };
 
 // TODO: Instruction generator for scheduler-start
