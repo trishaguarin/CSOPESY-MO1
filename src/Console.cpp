@@ -15,7 +15,7 @@
 // ============================================================================
 
 #include "Console.h"
-// #include "ConfigParser.h"
+#include "ConfigParser.h"
 // #include "Scheduler.h"
 // #include "ScreenManager.h"
 // #include "ReportGenerator.h"
@@ -26,11 +26,7 @@
 
 Console::Console()
 {
-    // TODO: Instantiate subsystems
-    // configParser    = std::make_unique<ConfigParser>();
-    // scheduler       = std::make_unique<Scheduler>();
-    // screenManager   = std::make_unique<ScreenManager>();
-    // reportGenerator = std::make_unique<ReportGenerator>();
+    configParser = std::make_unique<ConfigParser>();
 }
 
 Console::~Console() = default;
@@ -158,15 +154,27 @@ void Console::cmdInitialize()
         return;
     }
 
-    // TODO: Read config.txt using ConfigParser
-    //   configParser->loadFromFile("config.txt");
-    //
-    // TODO: Create the Scheduler with parsed config
-    //   auto config = configParser->getConfig();
-    //   scheduler = std::make_unique<Scheduler>(config);
-    //
-    // TODO: Create ScreenManager (needs reference to scheduler/process list)
-    //   screenManager = std::make_unique<ScreenManager>(...);
+    if (!configParser)
+    {
+        std::cout << "Internal error: Config parser unavailable.\n";
+        return;
+    }
+
+    if (!configParser->loadFromFile("config.txt"))
+    {
+        std::cout << "Failed to initialize system. Check config.txt for errors.\n";
+        return;
+    }
+
+    const SystemConfig& config = configParser->getConfig();
+    std::cout << "Configuration loaded successfully:\n";
+    std::cout << "  num-cpu: " << config.numCpu << "\n";
+    std::cout << "  scheduler: " << config.schedulerAlgo << "\n";
+    std::cout << "  quantum-cycles: " << config.quantumCycles << "\n";
+    std::cout << "  batch-process-freq: " << config.batchProcessFreq << "\n";
+    std::cout << "  min-ins: " << config.minIns << "\n";
+    std::cout << "  max-ins: " << config.maxIns << "\n";
+    std::cout << "  delays-per-exec: " << config.delaysPerExec << "\n";
 
     initialized = true;
     std::cout << "System initialized.\n";

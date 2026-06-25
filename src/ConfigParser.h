@@ -41,6 +41,7 @@ public:
     //   - Strip quotes from scheduler value ("fcfs" → fcfs)
     //   - Validate ranges per spec
     //   - Return false if file not found or invalid
+    // DONE: Implemented in ConfigParser.cpp
     bool loadFromFile(const std::string& filepath);
 
     // Returns the parsed config (only valid after successful loadFromFile)

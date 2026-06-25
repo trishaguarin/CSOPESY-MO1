@@ -49,8 +49,8 @@ private:
     bool running    = true;
     bool initialized = false; // gate: must call 'initialize' first
 
-    // TODO: Add owned subsystem pointers
-    // std::unique_ptr<ConfigParser>    configParser;
+    // Owned subsystem pointers
+    std::unique_ptr<ConfigParser>    configParser;
     // std::unique_ptr<Scheduler>       scheduler;
     // std::unique_ptr<ScreenManager>   screenManager;
     // std::unique_ptr<ReportGenerator> reportGenerator;
