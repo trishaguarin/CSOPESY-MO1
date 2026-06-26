@@ -1,9 +1,12 @@
 // ============================================================================
 // Scheduler.cpp — CPU Scheduler Implementation
 // ============================================================================
-// MO1 REQUIREMENT: Real-time CPU scheduler with FCFS and RR support
+// LESSON REFERENCE: Midterm Review — "Emulating a CPU scheduler"
+//   "We need the following: process representation, scheduler
+//    representation, and a way to debug/verify the correctness of
+//    our chosen scheduling algorithm."
 //
-// REFERENCE: FCFS-scheduler/Scheduler.h
+// REFERENCE: fcfs-scheduler branch (past activity)
 //   The old implementation had:
 //   - schedulerWorker(): wait for idle core, pop from queue, assign
 //   - coreWorker(): execute prints until finished, signal idle
@@ -37,6 +40,8 @@ void Scheduler::start()
     running = true;
 
     // TODO: Launch core worker threads (one per CPU core)
+    //   LESSON REFERENCE: Midterm Review activity
+    //     "CPU core is actually a thread worker."
     //   for (int i = 0; i < config.numCpu; ++i)
     //       coreThreads.emplace_back(&Scheduler::coreWorker, this, i);
 
@@ -131,6 +136,8 @@ int Scheduler::getCoresAvailable() const
 float Scheduler::getCpuUtilization() const
 {
     // TODO: Calculate CPU utilization
+    //   LESSON REFERENCE: Midterm Review activity (page 68)
+    //     Util (%) per core + overall
     //   Simple approach: (cores used / total cores) * 100
     //   Better approach: track cumulative busy ticks / total ticks per core
     int used = getCoresUsed();
@@ -149,11 +156,19 @@ void Scheduler::schedulerLoop()
 {
     // TODO: Implement the main scheduling loop
     //
-    // REFERENCE pseudocode from MO1SPECS (page 5):
-    //   while (running) {
-    //       cpuTick++;
-    //       // ... schedule ...
-    //   }
+    // MO1 REQUIREMENT: CPU ticks (page 5)
+    //   while (running) { cpuTick++; /* schedule */ }
+    //
+    // LESSON REFERENCE: Midterm Review — FCFS
+    //   FCFS is non-preemptive. Processes run to completion once assigned.
+    //
+    // LESSON REFERENCE: Midterm Review — Round-Robin algorithm
+    //   "For each CPU cycle, do the following:
+    //    a. Update R if there's any pending process to be scheduled.
+    //    b. Select the first process in R to be the candidate.
+    //    c. Execute candidate. candidate.C++;
+    //    d. If candidate.C == T, then perform #b. Put candidate at end of R.
+    //       Otherwise, perform #c."
     //
     // Detailed pseudocode:
     //
@@ -170,30 +185,30 @@ void Scheduler::schedulerLoop()
     //       // For each process in WAITING state, call tickSleep()
     //       // If it wakes up (WAITING → READY), re-add to readyQueue
     //
-    //       // ── FCFS: Assign ready processes to idle cores ──
-    //       if (config.schedulerAlgo == "fcfs") {
-    //           while (!readyQueue.empty() && hasIdleCore()) {
-    //               auto proc = readyQueue.front();
-    //               readyQueue.pop();
-    //               int core = getIdleCore();
-    //               coreStatus[core] = true;
-    //               coreProcess[core] = proc;
-    //               proc->setState(Process::RUNNING);
-    //               proc->setAssignedCore(core);
-    //               coreCV.notify_all();
-    //           }
-    //       }
+    //       // ── Assign ready processes to idle cores ──
+    //       // (same logic for both FCFS and RR — the difference is in
+    //       //  how coreWorker handles quantum preemption)
+    //       // while (!readyQueue.empty() && hasIdleCore()) {
+    //       //     auto proc = readyQueue.front();
+    //       //     readyQueue.pop();
+    //       //     int core = getIdleCore();
+    //       //     coreStatus[core] = true;
+    //       //     coreProcess[core] = proc;
+    //       //     proc->setState(Process::RUNNING);
+    //       //     proc->setAssignedCore(core);
+    //       //     coreCV.notify_all();
+    //       // }
     //
-    //       // ── RR: Same as FCFS but also check quantum preemption ──
-    //       if (config.schedulerAlgo == "rr") {
-    //           // For each busy core:
-    //           //   if coreTicksUsed[core] >= config.quantumCycles {
-    //           //       preempt: move process back to readyQueue
-    //           //       coreStatus[core] = false;
-    //           //       coreTicksUsed[core] = 0;
-    //           //   }
-    //           // Then assign from readyQueue same as FCFS
-    //       }
+    //       // ── RR preemption check ──
+    //       // if (config.schedulerAlgo == "rr") {
+    //       //     for each busy core:
+    //       //         if coreTicksUsed[core] >= config.quantumCycles {
+    //       //             preempt: set process state to READY
+    //       //             re-add to readyQueue
+    //       //             coreStatus[core] = false
+    //       //             coreTicksUsed[core] = 0
+    //       //         }
+    //       // }
     //
     //       // Small sleep to prevent busy-spinning the host CPU
     //       // std::this_thread::sleep_for(std::chrono::microseconds(100));
@@ -206,9 +221,10 @@ void Scheduler::coreWorker(int coreId)
 {
     // TODO: Implement core worker thread
     //
-    // REFERENCE: FCFS-scheduler/Scheduler.h coreWorker()
-    //   Old version:
-    //     wait for process assignment → execute prints → signal idle
+    // REFERENCE: fcfs-scheduler branch coreWorker()
+    //   Old version: wait for process assignment → execute prints → signal idle
+    //
+    // LESSON REFERENCE: Midterm Review — "CPU core is actually a thread worker"
     //
     // New version pseudocode:
     //
@@ -223,29 +239,29 @@ void Scheduler::coreWorker(int coreId)
     //           proc = coreProcess[coreId];
     //       }
     //
-    //       // Execute instructions
+    //       // Execute commands using the ICommand pattern
     //       while (proc && !proc->isFinished()) {
     //           // Handle delays-per-exec (busy waiting)
-    //           // The process stays in the CPU but doesn't execute
-    //           // for config.delaysPerExec ticks
+    //           //   MO1 REQUIREMENT: "The delay is a 'busy-waiting' scheme
+    //           //   wherein the process remains in the CPU."
     //           for (uint32_t d = 0; d < config.delaysPerExec; d++) {
     //               // busy wait — process occupies CPU but does nothing
-    //               // cpuTickCounter is incremented by schedulerLoop
     //           }
     //
-    //           // Execute one instruction
-    //           bool executed = proc->executeNextInstruction(coreId);
+    //           // Execute one command via ICommand interface
+    //           proc->executeCurrentCommand(coreId);
+    //           proc->moveToNextLine();
     //
+    //           // Check if process went to WAITING (SLEEP command)
     //           if (proc->getState() == Process::WAITING) {
-    //               // SLEEP instruction — process gives up CPU
-    //               break;
+    //               break; // process gives up CPU
     //           }
     //
     //           // For RR: check if quantum exhausted
     //           // if (config.schedulerAlgo == "rr") {
     //           //     coreTicksUsed[coreId]++;
     //           //     if (coreTicksUsed[coreId] >= config.quantumCycles)
-    //           //         break; // preempted by scheduler
+    //           //         break; // preempted
     //           // }
     //       }
     //

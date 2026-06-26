@@ -1,15 +1,28 @@
 // ============================================================================
 // Scheduler.h — CPU Scheduler (FCFS & Round-Robin)
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "CPU Scheduling"
+//   "CPU scheduling is a subset of process scheduling."
+//   "CPU scheduling specifically deals with deciding which process to
+//    execute next on the central processing unit (CPU)."
+//
+// LESSON REFERENCE: Midterm Review — "Emulating a CPU scheduler"
+//   "Modify the scheduler such that the CPU core is actually a thread
+//    worker. If there are four cores, then processes get assigned to
+//    a 'core', where its commands are executed."
+//
+// LESSON REFERENCE: Midterm Review — Design #1
+//   "There is only one ready queue." (shared ready queue model)
+//
 // MO1 REQUIREMENT: The scheduler (page 4-5)
-//   "Your CPU scheduler is real-time and will continuously schedule processes
-//    as long as your console is alive."
-//   "The scheduler algorithm will be set through the 'initialize' command
-//    and through the config.txt file."
+//   "Your CPU scheduler is real-time and will continuously schedule
+//    processes as long as your console is alive."
+//   "The scheduler algorithm will be set through the 'initialize'
+//    command and through the config.txt file."
 //
 // MO1 REQUIREMENT: CPU ticks (page 5)
-//   "Assume that the CPU tick is an integer counter that tallies the number
-//    of frame passes."
+//   "Assume that the CPU tick is an integer counter that tallies the
+//    number of frame passes."
 //   Pseudocode from spec:
 //     while (running) { cpuTick++; /* schedule */ }
 //
@@ -30,10 +43,10 @@
 //    The delay is a 'busy-waiting' scheme wherein the process remains
 //    in the CPU."
 //
-// REFERENCE: FCFS-scheduler/Scheduler.h
+// REFERENCE: fcfs-scheduler branch (past activity)
 //   Reusable: worker thread model, ready queue, core assignment logic
-//   Must add:  RR preemption, CPU tick model, batch generation,
-//              delays-per-exec, config-driven parameters
+//   Must add: RR preemption, CPU tick model, batch generation,
+//             delays-per-exec, config-driven parameters
 // ============================================================================
 #pragma once
 
@@ -78,37 +91,67 @@ public:
     int  getCoresAvailable() const;
 
     // TODO: CPU utilization calculation
-    //   CPU utilization % = (cores used / total cores) * 100
-    //   Or more accurately: track ticks where cores were busy vs idle
+    //   LESSON REFERENCE: Midterm Review activity (page 68)
+    //     "Provide a function that can be called anytime from the main
+    //      thread that writes down the CPU utilization."
+    //   Simple approach: (cores used / total cores) * 100
+    //   Better approach: track cumulative busy ticks / total ticks per core
     float getCpuUtilization() const;
 
     uint64_t getCpuTicks() const;
 
 private:
     // ── Scheduler Thread ─────────────────────────────────────────────────
-    // TODO: Implement the scheduler loop
-    //   The main scheduler thread that:
-    //   1. Increments CPU tick counter each iteration
-    //   2. Checks for idle cores
-    //   3. Assigns ready processes to idle cores
-    //   4. For RR: checks if running process has exceeded quantum
-    //   5. For batch generation: creates new process every batch-process-freq ticks
+    // TODO: Implement the main scheduling loop
+    //
+    // LESSON REFERENCE: Midterm Review — "Algorithmic Overview of Round-Robin"
+    //   "For each CPU cycle, do the following:
+    //    a. Update R if there's any pending process to be scheduled.
+    //    b. Select the first process in R to be the candidate.
+    //    c. Execute candidate. candidate.C++;
+    //    d. If candidate.C == T, then perform #b. Put candidate at end of R."
+    //
+    // LESSON REFERENCE: Midterm Review — FCFS
+    //   FCFS: processes run to completion. No preemption.
+    //
+    // Detailed pseudocode:
+    //   while (running) {
+    //       cpuTickCounter++;
+    //
+    //       // ── Batch generation ──
+    //       if (batchGenerating && cpuTickCounter % config.batchProcessFreq == 0)
+    //           generateProcess() → addProcess()
+    //
+    //       // ── Handle sleeping processes ──
+    //       // For each process in WAITING state, call tickSleep()
+    //       // If it wakes up (WAITING → READY), re-add to readyQueue
+    //
+    //       // ── FCFS: Assign ready processes to idle cores ──
+    //       // ── RR: Same but also check quantum preemption ──
+    //   }
     void schedulerLoop();
 
     // ── Core Worker Threads ──────────────────────────────────────────────
+    // LESSON REFERENCE: Midterm Review activity (page 67-68)
+    //   "CPU core is actually a thread worker. If there are four cores,
+    //    then processes get assigned to a 'core', where its commands
+    //    are executed."
+    //
     // TODO: Each core worker:
-    //   1. Waits for a process assignment
-    //   2. Executes instructions one at a time
-    //   3. Between instructions, busy-waits for delays-per-exec ticks
-    //   4. For RR: yields after quantum-cycles ticks
-    //   5. When process finishes or is preempted, signals scheduler
+    //   1. Waits for a process assignment (via condition variable)
+    //   2. Calls process->executeCurrentCommand(coreId) per tick
+    //   3. Calls process->moveToNextLine() after each execution
+    //   4. Between commands, busy-waits for delays-per-exec ticks
+    //   5. For RR: yields after quantum-cycles ticks
+    //   6. When process finishes, is preempted, or SLEEPs, signals scheduler
     void coreWorker(int coreId);
 
     // ── Batch Process Generator ──────────────────────────────────────────
     // TODO: Generate a new process with:
     //   - Human-readable name (p01, p02, ..., p1240)
-    //   - Random instruction count between min-ins and max-ins
-    //   - Randomized instruction types
+    //   - Random command count between min-ins and max-ins (from config)
+    //   - Randomized ICommand types using the concrete command classes
+    //     (PrintCommand, DeclareCommand, AddCommand, etc.)
     // std::shared_ptr<Process> generateProcess();
 
     // ── Configuration ────────────────────────────────────────────────────
@@ -120,6 +163,7 @@ private:
     std::atomic<uint64_t> cpuTickCounter{0};
 
     // ── Process Queues ───────────────────────────────────────────────────
+    // LESSON REFERENCE: Design #1 — "There is only one ready queue."
     std::queue<std::shared_ptr<Process>>   readyQueue;
     std::vector<std::shared_ptr<Process>>  allProcesses;
 
@@ -133,6 +177,9 @@ private:
 
     // TODO: For Round-Robin — track how many ticks each core has run
     //   its current process (for quantum preemption)
+    //
+    // LESSON REFERENCE: Midterm Review — Round-Robin
+    //   "If candidate.C == T, then put candidate at the end of R."
     // std::map<int, uint32_t> coreTicksUsed;
 
     // ── Synchronization ──────────────────────────────────────────────────

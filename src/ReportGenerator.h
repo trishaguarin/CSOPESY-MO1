@@ -1,6 +1,12 @@
 // ============================================================================
 // ReportGenerator.h — CPU Utilization Report
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "Logging"
+//   "We want to keep track of which programs use how much and what
+//    kinds of computer resources."
+//   "Basic logging must be supported. E.g. Viewing of running processes,
+//    checking resource availability, CPU and memory utilization."
+//
 // MO1 REQUIREMENT: report-util (page 3-4)
 //   "The console should be able to generate a utilization report whenever
 //    the 'report-util' command is entered."
@@ -16,10 +22,10 @@
 //   Cores available: X
 //   -----------------------------------------
 //   Running processes:
-//   <name>  <timestamp>  Core: X  <current>/<total>
+//   <name>  <timestamp>  Core: X  <commandCounter>/<totalCommands>
 //   ...
 //   Finished processes:
-//   <name>  <timestamp>  Finished  <total>/<total>
+//   <name>  <timestamp>  Finished  <totalCommands>/<totalCommands>
 //   ...
 //   -----------------------------------------
 // ============================================================================

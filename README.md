@@ -14,8 +14,14 @@ The system emulates a simplified OS shell with:
 - A **CLI console** recognizing OS-level commands
 - A **screen multiplexer** (inspired by Linux `screen`)
 - A **CPU scheduler** supporting FCFS and Round-Robin
-- **Process instructions** (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+- **Process instructions** via the ICommand pattern (PRINT, DECLARE, ADD, SUBTRACT, SLEEP, FOR)
+- A **SymbolTable** for per-process variable storage
 - A **config.txt**-driven setup (no recompilation needed to change parameters)
+
+### Design References
+- **MO1 Specs** (`MO1SPECS.pdf`) — Feature requirements and assessment criteria
+- **Midterm Review** (`CSOPESY_MIDTERM_REVIEW.pdf`) — Lessons on OS concepts, ICommand pattern, SymbolTable, PCB design, CPU scheduling algorithms (FCFS, RR, SJF), threading model
+- **fcfs-scheduler branch** — Past activity with initial FCFS scheduler implementation
 
 ---
 
@@ -26,20 +32,41 @@ CSOPESY-MO1/
 ├── README.md               # You are here
 ├── config.txt              # Runtime configuration (read by `initialize`)
 ├── MO1SPECS.pdf            # Official specifications
+├── CSOPESY_MIDTERM_REVIEW.pdf  # Midterm review lessons & code patterns
 │
 ├── src/
 │   ├── main.cpp            # Entry point — boots the CLI
 │   ├── Console.h/.cpp      # Main menu console, command dispatcher
 │   ├── ConfigParser.h/.cpp # Parses config.txt into runtime settings
-│   ├── Process.h/.cpp      # Process representation + instruction execution
-│   ├── Instruction.h       # Instruction types enum and struct
+│   │
+│   ├── ICommand.h          # Abstract command interface (base class)
+│   ├── PrintCommand.h      # PRINT(msg) — display output
+│   ├── DeclareCommand.h    # DECLARE(var, value) — declare uint16 variable
+│   ├── AddCommand.h        # ADD(var1, var2, var3) — addition
+│   ├── SubtractCommand.h   # SUBTRACT(var1, var2, var3) — subtraction
+│   ├── SleepCommand.h      # SLEEP(X) — sleep for X CPU ticks
+│   ├── ForCommand.h        # FOR([cmds], repeats) — loop, nestable 3x
+│   │
+│   ├── SymbolTable.h       # Per-process variable storage (uint16 map)
+│   ├── Process.h/.cpp      # Process Control Block (PCB) with ICommand list
 │   ├── Scheduler.h/.cpp    # FCFS & RR scheduling with CPU tick model
 │   ├── ScreenManager.h/.cpp# Screen multiplexer (screen -s, -r, -ls)
-│   └── ReportGenerator.h/.cpp # report-util + csopesy-log.txt
+│   ├── ReportGenerator.h/.cpp # report-util + csopesy-log.txt
+│   └── Instruction.h       # DEPRECATED — redirects to ICommand.h
 │
 └── docs/
     └── architecture.md     # Architectural notes (optional)
 ```
+
+### Design Patterns Used (from Midterm Review)
+
+| Pattern | Where | Reference |
+|---------|-------|-----------|
+| **Command Pattern** | ICommand + concrete commands | Midterm Review pp. 51-52 |
+| **PCB (Process Control Block)** | Process class | Midterm Review pp. 49-50 |
+| **Symbol Table** | SymbolTable class | Midterm Review pp. 53-54 |
+| **Thread Workers** | Scheduler core workers | Midterm Review pp. 67-68 |
+| **Single Ready Queue** | Scheduler (Design #1) | Midterm Review p. 73 |
 
 ---
 
@@ -107,6 +134,23 @@ delays-per-exec 0
 | `clear`                     | Main menu | Clear the console                             |
 | `exit`                      | Both      | Exit screen → main menu, or quit application  |
 | `process-smi`               | Screen    | Show process info and instruction logs        |
+
+---
+
+## Implementation Status
+
+> **Current state: Skeleton/backbone only — TODOs mark all implementation points.**
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Console + command dispatch | ✅ Structure | Commands recognized, TODOs for wiring |
+| ConfigParser | ✅ Structure | Parsing pseudocode in TODOs |
+| ICommand interface | ✅ Structure | All 6 command headers created |
+| SymbolTable | ✅ Structure | Class skeleton ready |
+| Process (PCB) | ✅ Structure | Follows review's pattern |
+| Scheduler (FCFS + RR) | ✅ Structure | Algorithm pseudocode in TODOs |
+| ScreenManager | ✅ Structure | Screen loop pseudocode in TODOs |
+| ReportGenerator | ✅ Structure | Report format in TODOs |
 
 ---
 

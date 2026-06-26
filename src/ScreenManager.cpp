@@ -10,7 +10,7 @@
 //   Line 3:  ""
 //   Line 4:  "Current instruction line: 50"
 //   Line 5:  "Lines of code: 100"
-//   Lines 6+: logs from PRINT instructions
+//   Lines 6+: logs from PRINT instructions (via process->getOutputLog())
 //   If finished: "Finished!"
 // ============================================================================
 
@@ -39,9 +39,11 @@ void ScreenManager::createScreen(const std::string& processName)
     //
     //   2. Create a new Process
     //      - Generate a unique PID
-    //      - Create with a default instruction set (just PRINTs for now?)
-    //        Or: create with empty instructions that the scheduler will fill?
-    //      auto proc = std::make_shared<Process>(pid, processName, instructions);
+    //      - Use addCommand() to populate its commandList
+    //        with ICommand objects (PrintCommand by default)
+    //      auto proc = std::make_shared<Process>(pid, processName);
+    //      proc->addCommand(std::make_shared<PrintCommand>());
+    //      // ... add more commands as needed
     //
     //   3. Register in processMap and add to scheduler
     //      processMap[processName] = proc;
@@ -83,9 +85,9 @@ void ScreenManager::listProcesses()
     //     Cores available: X
     //     ---
     //     Running processes:
-    //       <name>   <timestamp>   Core: X   <current>/<total>
+    //       <name>   <timestamp>   Core: X   <commandCounter>/<totalCommands>
     //     Finished processes:
-    //       <name>   <timestamp>   Finished  <total>/<total>
+    //       <name>   <timestamp>   Finished  <totalCommands>/<totalCommands>
     //     ---
     //
     //   Use:
@@ -97,6 +99,8 @@ void ScreenManager::listProcesses()
 }
 
 // ── Screen Loop ──────────────────────────────────────────────────────────────
+// LESSON REFERENCE: This is analogous to the AConsole pattern from the
+//   review — each screen has its own display()/process() loop.
 
 void ScreenManager::enterScreenLoop(std::shared_ptr<Process> proc)
 {
@@ -149,8 +153,8 @@ void ScreenManager::showProcessInfo(std::shared_ptr<Process> proc)
     //     if (finished):
     //         Finished!
     //     else:
-    //         Current instruction line: <currentLine>
-    //         Lines of code: <totalLines>
+    //         Current instruction line: <commandCounter>
+    //         Lines of code: <totalCommands>
     //
-    //     <print logs from process output buffer>
+    //     <logs from process->getOutputLog()>
 }

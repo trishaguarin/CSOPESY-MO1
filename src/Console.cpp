@@ -1,17 +1,17 @@
 // ============================================================================
 // Console.cpp — CLI Console Implementation
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "Command interpreter"
+//   "Developing a command interpreter require processing of commands
+//    received from keyboard input. Maintains a list of commands
+//    recognizable. Tokenization of command."
+//
 // MO1 REQUIREMENT: Main menu console
 //   The main loop reads user input and dispatches to the correct handler.
 //
 // MO1 REQUIREMENT: initialize gate
-//   All commands except 'exit' should print an error if !initialized.
-//
-// REFERENCE: Week2GroupHW.cpp had the skeleton for this.
-//   Key differences from the old code:
-//   - Commands now have real logic behind them (not just "recognized")
-//   - 'screen' must be parsed for subcommands (-s, -r, -ls)
-//   - 'initialize' must read config.txt before anything works
+//   All commands except 'exit' and 'clear' should print an error
+//   if !initialized.
 // ============================================================================
 
 #include "Console.h"
@@ -28,15 +28,17 @@ Console::Console()
 {
     // TODO: Instantiate subsystems
     // configParser    = std::make_unique<ConfigParser>();
-    // scheduler       = std::make_unique<Scheduler>();
-    // screenManager   = std::make_unique<ScreenManager>();
-    // reportGenerator = std::make_unique<ReportGenerator>();
+    // Note: scheduler and screenManager are created AFTER initialize
+    //       reads config.txt, since Scheduler needs SystemConfig params.
 }
 
 Console::~Console() = default;
 
 // ── ASCII Header ─────────────────────────────────────────────────────────────
 // MO1 REQUIREMENT: "A main menu console" — present a branded CLI
+// LESSON REFERENCE: Midterm Review activity
+//   "Provide your ASCII text header 'CSOPESY' or a name for your
+//    command line emulator."
 void Console::printHeader()
 {
     std::cout << R"(
@@ -57,6 +59,10 @@ void Console::printHeader()
 }
 
 // ── Main Loop ────────────────────────────────────────────────────────────────
+// LESSON REFERENCE: Midterm Review — "Enter main loop"
+//   "Continuously handle interrupts and system calls. Dispatch user
+//    processes and manage their execution. Handle user input and
+//    manage I/O operations."
 void Console::run()
 {
     printHeader();
@@ -85,6 +91,7 @@ void Console::run()
 // ── Command Dispatcher ───────────────────────────────────────────────────────
 // MO1 REQUIREMENT: recognize initialize, exit, screen, scheduler-start,
 //                  scheduler-stop, report-util
+// LESSON REFERENCE: Midterm Review — "Tokenization of command"
 void Console::processCommand(const std::string& input)
 {
     // 'exit' always works, even before initialize
@@ -147,6 +154,9 @@ void Console::processCommand(const std::string& input)
 
 // ── Command Implementations ──────────────────────────────────────────────────
 
+// LESSON REFERENCE: Midterm Review — "Kernel initialization"
+//   "Initialize data structures (process table, file system, etc.)"
+//   "Initialize memory management and scheduling algorithms."
 // MO1 REQUIREMENT: Configuration setting
 //   "The 'initialize' command should read from a 'config.txt' file,
 //    the parameters for your CPU scheduler and process attributes."
@@ -159,14 +169,20 @@ void Console::cmdInitialize()
     }
 
     // TODO: Read config.txt using ConfigParser
-    //   configParser->loadFromFile("config.txt");
+    //   configParser = std::make_unique<ConfigParser>();
+    //   if (!configParser->loadFromFile("config.txt")) {
+    //       std::cerr << "Error: Failed to load config.txt\n";
+    //       return;
+    //   }
     //
     // TODO: Create the Scheduler with parsed config
     //   auto config = configParser->getConfig();
     //   scheduler = std::make_unique<Scheduler>(config);
+    //   scheduler->start();
     //
-    // TODO: Create ScreenManager (needs reference to scheduler/process list)
-    //   screenManager = std::make_unique<ScreenManager>(...);
+    // TODO: Create ScreenManager and ReportGenerator
+    //   screenManager   = std::make_unique<ScreenManager>(scheduler.get());
+    //   reportGenerator = std::make_unique<ReportGenerator>(scheduler.get());
 
     initialized = true;
     std::cout << "System initialized.\n";
@@ -198,6 +214,8 @@ void Console::cmdScreen(const std::string& args)
         std::string processName = args.substr(3);
         // TODO: screenManager->createScreen(processName);
         //   - Create a new Process with the given name
+        //   - Add ICommand objects to its commandList
+        //   - Add to scheduler's ready queue
         //   - Clear console, enter process screen
         //   - Inside screen: support 'process-smi' and 'exit'
         std::cout << "'screen -s " << processName << "' — TODO: Create process.\n";
@@ -226,8 +244,8 @@ void Console::cmdSchedulerStart()
     // TODO: Start the batch process generation loop
     //   scheduler->startBatchGeneration();
     //   - Uses batch-process-freq from config
-    //   - Generates processes with randomized instructions
-    //   - Instruction count between min-ins and max-ins
+    //   - Generates processes with randomized ICommand objects
+    //   - Command count between min-ins and max-ins
     //   - Process names: p01, p02, ..., p1240, etc.
     std::cout << "'scheduler-start' — TODO: Start batch generation.\n";
 }
@@ -246,7 +264,7 @@ void Console::cmdSchedulerStop()
 //    csopesy-log.txt."
 void Console::cmdReportUtil()
 {
-    // TODO: reportGenerator->generateReport(scheduler);
+    // TODO: reportGenerator->saveToFile();
     //   - CPU utilization %
     //   - Cores used / cores available
     //   - Running and finished process lists

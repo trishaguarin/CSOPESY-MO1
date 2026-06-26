@@ -1,6 +1,10 @@
 // ============================================================================
 // ConfigParser.h — config.txt Reader
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "Kernel initialization"
+//   "Initialize data structures (process table, file system, etc.)"
+//   "Initialize memory management and scheduling algorithms."
+//   The config.txt file provides the parameters for these subsystems.
 // MO1 REQUIREMENT: Configuration setting
 //   "The 'initialize' command should read from a 'config.txt' file,
 //    the parameters for your CPU scheduler and process attributes."

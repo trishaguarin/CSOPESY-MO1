@@ -1,6 +1,7 @@
 // ============================================================================
 // ReportGenerator.cpp — CPU Utilization Report Implementation
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "Logging"
 // MO1 REQUIREMENT: report-util + csopesy-log.txt
 // ============================================================================
 
@@ -32,7 +33,7 @@ std::string ReportGenerator::generateReport() const
     //       ss << p->getName() << "  "
     //          << Process::getTimestamp() << "  "  // or stored creation time
     //          << "Core: " << p->getAssignedCore() << "  "
-    //          << p->getCurrentLine() << "/" << p->getTotalLines() << "\n";
+    //          << p->getCommandCounter() << "/" << p->getTotalCommands() << "\n";
     //   }
     //
     //   ss << "\nFinished processes:\n";
@@ -40,7 +41,7 @@ std::string ReportGenerator::generateReport() const
     //       ss << p->getName() << "  "
     //          << Process::getTimestamp() << "  "
     //          << "Finished  "
-    //          << p->getTotalLines() << "/" << p->getTotalLines() << "\n";
+    //          << p->getTotalCommands() << "/" << p->getTotalCommands() << "\n";
     //   }
     //
     //   ss << "--------------------------------------\n";

@@ -1,6 +1,21 @@
 // ============================================================================
 // Console.h — CLI Console & Command Dispatcher
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "Command interpreter"
+//   "Most operating systems treat the command interpreter as a special
+//    program that is running when a process is initiated or when a user
+//    first logs on."
+//   "Developing a command interpreter require processing of commands
+//    received from keyboard input."
+//   "Maintains a list of commands recognizable."
+//
+// LESSON REFERENCE: Midterm Review — "ConsoleManager" pattern
+//   The review introduces a ConsoleManager that stores different console
+//   layouts via std::map<string, shared_ptr<AConsole>>. While this MO1
+//   uses a simpler approach (Console + ScreenManager), the concept of
+//   console state switching applies: the main menu is one "state" and
+//   each process screen is another "state".
+//
 // MO1 REQUIREMENT: Main menu console
 //   Recognizes: initialize, exit, screen, scheduler-start, scheduler-stop,
 //   report-util, clear
@@ -49,7 +64,8 @@ private:
     bool running    = true;
     bool initialized = false; // gate: must call 'initialize' first
 
-    // TODO: Add owned subsystem pointers
+    // Owned subsystem pointers
+    // TODO: Uncomment and wire up during implementation
     // std::unique_ptr<ConfigParser>    configParser;
     // std::unique_ptr<Scheduler>       scheduler;
     // std::unique_ptr<ScreenManager>   screenManager;

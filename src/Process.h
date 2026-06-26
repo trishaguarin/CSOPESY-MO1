@@ -1,18 +1,27 @@
 // ============================================================================
-// Process.h — Process Representation
+// Process.h — Process Control Block (PCB)
 // ============================================================================
+// LESSON REFERENCE: Midterm Review — "C++ Representation of a Process"
+//   "In our emulator, we represent the PCB using a Process class. This
+//    class manages the process lifecycle, its instructions, and its
+//    local variables."
+//
+//   The PCB contains: Process State, Program Counter (commandCounter),
+//   CPU Registers, CPU-Scheduling Information, Memory-Management Info,
+//   Accounting Information, I/O Status Information.
+//
 // MO1 REQUIREMENT: Process with instruction execution
 //   Each process has:
 //   - A unique PID and human-readable name
-//   - A list of Instructions to execute
+//   - A list of ICommands to execute (commandList)
 //   - A state (READY, RUNNING, WAITING, FINISHED)
 //   - An assigned core (-1 if not assigned)
-//   - A per-process variable store (map<string, uint16_t>)
+//   - A SymbolTable for variable storage
 //   - Creation timestamp
 //
 // MO1 REQUIREMENT: SLEEP instruction
 //   "Sleeps the current process for X CPU ticks and relinquishes the CPU."
-//   → The process state should change to WAITING when sleeping
+//   → The process state changes to WAITING when sleeping
 //
 // MO1 REQUIREMENT: Variables
 //   "Variables are stored in memory and will not be released until
@@ -21,21 +30,27 @@
 //   "Variables are automatically declared with a value of 0 if they
 //    have not yet been declared beforehand."
 //
-// REFERENCE: FCFS-scheduler/Process.h
+// LESSON REFERENCE: Process states (Midterm Review page 59)
+//   - READY:    Process is waiting to be assigned to a processor
+//   - RUNNING:  Instructions are being executed
+//   - WAITING:  Process is waiting for some event (e.g., SLEEP)
+//   - FINISHED: Process has finished execution (analogous to TERMINATED)
+//
+// REFERENCE: fcfs-scheduler branch (past activity)
 //   Reusable: PID, name, state enum, core assignment, timestamps
-//   Must add:  instruction list, variable store, instruction pointer
+//   Must add: ICommand list, SymbolTable, command counter
 // ============================================================================
 #pragma once
 
-#include "Instruction.h"
+#include "ICommand.h"
+#include "SymbolTable.h"
 
 #include <string>
 #include <vector>
-#include <map>
 #include <mutex>
 #include <atomic>
 #include <ctime>
-#include <fstream>
+#include <memory>
 
 class Process
 {
@@ -48,76 +63,96 @@ public:
         FINISHED
     };
 
-    Process(int pid, const std::string& name,
-            const std::vector<Instruction>& instructions);
+    Process(int pid, const std::string& name);
     ~Process();
+
+    // ── Command Management ───────────────────────────────────────────────
+    // LESSON REFERENCE: Midterm Review Process.h
+    //   "void addCommand(std::shared_ptr<ICommand> command);"
+    //   "void executeCurrentCommand();"
+    //   "void moveToNextLine();"
+
+    // TODO: Append a command to the process's command list
+    //   Called during process creation to build the instruction sequence
+    void addCommand(std::shared_ptr<ICommand> command);
+
+    // TODO: Execute the command at the current commandCounter position
+    //   - Get commandList[commandCounter]
+    //   - Call command->execute(this)
+    //   - Handle state changes (e.g., SLEEP sets state to WAITING)
+    void executeCurrentCommand(int coreId);
+
+    // TODO: Advance the command counter to the next instruction
+    //   - commandCounter++
+    //   - If commandCounter >= commandList.size(), set state to FINISHED
+    void moveToNextLine();
 
     // ── Getters ──────────────────────────────────────────────────────────
     int                getPID()             const;
     std::string        getName()            const;
     ProcessState       getState()           const;
     int                getAssignedCore()    const;
-    int                getCurrentLine()     const; // instruction pointer
-    int                getTotalLines()      const; // total instruction count
+    int                getCommandCounter()  const; // current instruction index
+    int                getTotalCommands()   const; // total command count
     std::time_t        getCreationTime()    const;
     bool               isFinished()         const;
+
+    // ── SymbolTable Access ───────────────────────────────────────────────
+    // LESSON REFERENCE: Midterm Review — "SymbolTable& getSymbolTable();"
+    //   Commands call this to read/write process-local variables
+    SymbolTable& getSymbolTable();
 
     // ── Setters ──────────────────────────────────────────────────────────
     void setState(ProcessState s);
     void setAssignedCore(int core);
 
-    // ── Execution ────────────────────────────────────────────────────────
-    // TODO: Execute the next instruction in this process's instruction list
-    //   - Advance the instruction pointer
-    //   - Handle each InstructionType appropriately
-    //   - For PRINT: write to the process's log / output buffer
-    //   - For DECLARE: add to variableStore
-    //   - For ADD/SUBTRACT: compute and store in variableStore
-    //   - For SLEEP: set state to WAITING, record remaining sleep ticks
-    //   - For FOR: manage loop counter and nested instruction pointer
-    //   - Return true if instruction executed, false if process is finished
-    bool executeNextInstruction(int coreId);
+    // ── Sleep Management ─────────────────────────────────────────────────
+    // TODO: Called by SleepCommand to initiate sleep
+    void setSleepTicks(int ticks);
 
     // TODO: Check and decrement sleep counter (called each CPU tick)
-    //   If sleepTicksRemaining > 0, decrement.
-    //   If it reaches 0, set state back to READY.
+    //   if (sleepTicksRemaining > 0) {
+    //       sleepTicksRemaining--;
+    //       if (sleepTicksRemaining == 0) {
+    //           state = READY; // wake up, go back to ready queue
+    //       }
+    //   }
     void tickSleep();
 
-    // ── Logging ──────────────────────────────────────────────────────────
+    // ── Output Log ───────────────────────────────────────────────────────
+    // TODO: Append to the output log (called by PrintCommand)
+    void appendToLog(const std::string& entry);
+
     // TODO: Get the output log for process-smi display
     //   Returns the accumulated PRINT outputs for this process
-    // std::string getOutputLog() const;
+    const std::vector<std::string>& getOutputLog() const;
 
-    // ── Timestamp helper (reused from old Process.h) ─────────────────────
+    // ── Timestamp helper (reused from fcfs-scheduler branch) ─────────────
     static std::string getTimestamp();
 
 private:
     int                      pid;
     std::string              name;
-    std::vector<Instruction> instructions;
     std::atomic<ProcessState> state;
     std::atomic<int>         assignedCore;
     std::time_t              creationTime;
 
-    // TODO: Instruction pointer — tracks which instruction to execute next
-    int instructionPointer = 0;
+    // LESSON REFERENCE: Midterm Review Process.h
+    //   "std::vector<std::shared_ptr<ICommand>> commandList;"
+    //   "int commandCounter;"
+    std::vector<std::shared_ptr<ICommand>> commandList;
+    int commandCounter = 0;
 
-    // TODO: Variable store for DECLARE/ADD/SUBTRACT
-    //   - Auto-declare with value 0 if not found
-    //   - Clamp to [0, 65535]
-    // std::map<std::string, uint16_t> variableStore;
+    // LESSON REFERENCE: Midterm Review — SymbolTable
+    //   "SymbolTable symbolTable;"
+    SymbolTable symbolTable;
 
-    // TODO: Sleep tracking
-    // int sleepTicksRemaining = 0;
-
-    // TODO: FOR loop state tracking
-    //   Need a stack of {loop start index, current iteration, max iterations}
-    //   for nested FOR loops (up to 3 deep)
-    // struct ForLoopState { int startIdx; int current; int total; };
-    // std::vector<ForLoopState> forStack;
+    // TODO: Sleep tracking — number of CPU ticks remaining
+    int sleepTicksRemaining = 0;
 
     // TODO: Output log buffer (for process-smi display)
-    // std::vector<std::string> outputLog;
+    //   PrintCommand appends entries here
+    std::vector<std::string> outputLog;
 
     std::mutex processMutex; // thread safety
 };
