@@ -127,11 +127,15 @@ std::string Process::getTimestamp()
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm tm_info;
-#ifdef _WIN32
-    localtime_s(&tm_info, &t);
-#else
-    localtime_r(&t, &tm_info);
-#endif
+    std::tm* tm_ptr = std::localtime(&t);
+    if (tm_ptr)
+    {
+        tm_info = *tm_ptr;
+    }
+    else
+    {
+        std::memset(&tm_info, 0, sizeof(tm_info));
+    }
     std::ostringstream oss;
     int hour = tm_info.tm_hour;
     const char* ampm = (hour >= 12) ? "PM" : "AM";

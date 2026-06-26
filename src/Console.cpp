@@ -15,8 +15,8 @@
 // ============================================================================
 
 #include "Console.h"
-// #include "ConfigParser.h"
-// #include "Scheduler.h"
+#include "ConfigParser.h"
+#include "Scheduler.h"
 // #include "ScreenManager.h"
 // #include "ReportGenerator.h"
 
@@ -30,6 +30,7 @@ Console::Console()
     // configParser    = std::make_unique<ConfigParser>();
     // Note: scheduler and screenManager are created AFTER initialize
     //       reads config.txt, since Scheduler needs SystemConfig params.
+    configParser = std::make_unique<ConfigParser>();
 }
 
 Console::~Console() = default;
@@ -168,24 +169,33 @@ void Console::cmdInitialize()
         return;
     }
 
-    // TODO: Read config.txt using ConfigParser
-    //   configParser = std::make_unique<ConfigParser>();
-    //   if (!configParser->loadFromFile("config.txt")) {
-    //       std::cerr << "Error: Failed to load config.txt\n";
-    //       return;
-    //   }
-    //
-    // TODO: Create the Scheduler with parsed config
-    //   auto config = configParser->getConfig();
-    //   scheduler = std::make_unique<Scheduler>(config);
-    //   scheduler->start();
-    //
-    // TODO: Create ScreenManager and ReportGenerator
-    //   screenManager   = std::make_unique<ScreenManager>(scheduler.get());
-    //   reportGenerator = std::make_unique<ReportGenerator>(scheduler.get());
+    if (!configParser)
+    {
+        std::cout << "Internal error: Config parser unavailable.\n";
+        return;
+    }
+
+    if (!configParser->loadFromFile("config.txt"))
+    {
+        std::cout << "Failed to initialize system. Check config.txt for errors.\n";
+        return;
+    }
+
+    const SystemConfig& config = configParser->getConfig();
+    std::cout << "Configuration loaded successfully:\n";
+    std::cout << "  num-cpu: " << config.numCpu << "\n";
+    std::cout << "  scheduler: " << config.schedulerAlgo << "\n";
+    std::cout << "  quantum-cycles: " << config.quantumCycles << "\n";
+    std::cout << "  batch-process-freq: " << config.batchProcessFreq << "\n";
+    std::cout << "  min-ins: " << config.minIns << "\n";
+    std::cout << "  max-ins: " << config.maxIns << "\n";
+    std::cout << "  delays-per-exec: " << config.delaysPerExec << "\n";
+
+    scheduler = std::make_unique<Scheduler>(config);
+    scheduler->start();
 
     initialized = true;
-    std::cout << "System initialized.\n";
+    std::cout << "System initialized. Scheduler started.\n";
 }
 
 // MO1 REQUIREMENT: screen command support
@@ -247,7 +257,15 @@ void Console::cmdSchedulerStart()
     //   - Generates processes with randomized ICommand objects
     //   - Command count between min-ins and max-ins
     //   - Process names: p01, p02, ..., p1240, etc.
-    std::cout << "'scheduler-start' — TODO: Start batch generation.\n";
+    if (scheduler)
+    {
+        scheduler->startBatchGeneration();
+        std::cout << "Batch generation started.\n";
+    }
+    else
+    {
+        std::cout << "Scheduler unavailable.\n";
+    }
 }
 
 // MO1 REQUIREMENT: scheduler-stop
@@ -256,7 +274,15 @@ void Console::cmdSchedulerStop()
 {
     // TODO: Stop the batch process generation loop
     //   scheduler->stopBatchGeneration();
-    std::cout << "'scheduler-stop' — TODO: Stop batch generation.\n";
+    if (scheduler)
+    {
+        scheduler->stopBatchGeneration();
+        std::cout << "Batch generation stopped.\n";
+    }
+    else
+    {
+        std::cout << "Scheduler unavailable.\n";
+    }
 }
 
 // MO1 REQUIREMENT: report-util

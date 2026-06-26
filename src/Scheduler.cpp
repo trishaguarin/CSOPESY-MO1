@@ -17,10 +17,13 @@
 
 #include "Scheduler.h"
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <random>
+#include <thread>
+#include <mutex>
 
 Scheduler::Scheduler(const SystemConfig& config)
     : config(config)
@@ -56,9 +59,12 @@ void Scheduler::stop()
     schedulerCV.notify_all();
     coreCV.notify_all();
 
-    if (schedulerThread.joinable()) schedulerThread.join();
+    if (schedulerThread.joinable())
+        schedulerThread.join();
+
     for (auto& t : coreThreads)
-        if (t.joinable()) t.join();
+        if (t.joinable())
+            t.join();
     coreThreads.clear();
 }
 
@@ -74,7 +80,7 @@ void Scheduler::addProcess(std::shared_ptr<Process> proc)
         std::lock_guard<std::mutex> lock(listMutex);
         allProcesses.push_back(proc);
     }
-    schedulerCV.notify_all();
+    // TODO: Notify scheduler loop when a new process is added.
 }
 
 // ── Batch Generation ─────────────────────────────────────────────────────────
@@ -84,11 +90,13 @@ void Scheduler::startBatchGeneration()
     // TODO: Set batchGenerating = true
     //   The schedulerLoop should check this flag and generate a new process
     //   every config.batchProcessFreq CPU ticks.
+    // DONE: Batch generation enabled
     batchGenerating = true;
 }
 
 void Scheduler::stopBatchGeneration()
 {
+    // DONE: Batch generation disabled
     batchGenerating = false;
 }
 
@@ -124,7 +132,6 @@ int Scheduler::getNumCores() const { return config.numCpu; }
 
 int Scheduler::getCoresUsed() const
 {
-    std::lock_guard<std::mutex> lock(coreMutex);
     return static_cast<int>(std::count(coreStatus.begin(), coreStatus.end(), true));
 }
 
@@ -140,6 +147,7 @@ float Scheduler::getCpuUtilization() const
     //     Util (%) per core + overall
     //   Simple approach: (cores used / total cores) * 100
     //   Better approach: track cumulative busy ticks / total ticks per core
+    // DONE: Simple utilization calculation implemented
     int used = getCoresUsed();
     if (config.numCpu == 0) return 0.0f;
     return (static_cast<float>(used) / config.numCpu) * 100.0f;
@@ -148,6 +156,57 @@ float Scheduler::getCpuUtilization() const
 uint64_t Scheduler::getCpuTicks() const
 {
     return cpuTickCounter.load();
+}
+
+std::shared_ptr<Process> Scheduler::generateProcess()
+{
+    static thread_local std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> instructionCount(config.minIns, config.maxIns);
+    std::uniform_int_distribution<int> opcode(0, 2);
+    std::uniform_int_distribution<int> sleepValue(1, 3);
+
+    ++processCounter;
+    std::ostringstream name;
+    name << "p" << std::setw(2) << std::setfill('0') << processCounter;
+    std::vector<Instruction> instructions;
+    int count = instructionCount(rng);
+    for (int i = 0; i < count; ++i)
+    {
+        switch (opcode(rng))
+        {
+            case 0:
+                instructions.push_back(Instruction::makePrint("Hello world from " + name.str() + "!"));
+                break;
+            case 1:
+                instructions.push_back(Instruction::makeSleep(static_cast<uint32_t>(sleepValue(rng))));
+                break;
+            default:
+                instructions.push_back(Instruction::makeAdd("x", "1", "2"));
+                break;
+        }
+    }
+
+    return std::make_shared<Process>(processCounter, name.str(), instructions);
+}
+
+bool Scheduler::hasIdleCore() const
+{
+    for (bool busy : coreStatus)
+    {
+        if (!busy)
+            return true;
+    }
+    return false;
+}
+
+int Scheduler::getIdleCore() const
+{
+    for (int i = 0; i < static_cast<int>(coreStatus.size()); ++i)
+    {
+        if (!coreStatus[i])
+            return i;
+    }
+    return -1;
 }
 
 // ── Scheduler Loop ───────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // Scheduler.h — CPU Scheduler (FCFS & Round-Robin)
 // ============================================================================
 // LESSON REFERENCE: Midterm Review — "CPU Scheduling"
@@ -56,11 +56,11 @@
 #include <queue>
 #include <vector>
 #include <map>
+#include <memory>
+#include <atomic>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <memory>
-#include <atomic>
 
 class Scheduler
 {
@@ -154,10 +154,10 @@ private:
     //     (PrintCommand, DeclareCommand, AddCommand, etc.)
     // std::shared_ptr<Process> generateProcess();
 
-    // ── Configuration ────────────────────────────────────────────────────
+    // ── Configuration ───────────────────────────────────────────────────
     SystemConfig config;
 
-    // ── State ────────────────────────────────────────────────────────────
+    // ── State ───────────────────────────────────────────────────────────
     std::atomic<bool>     running{false};
     std::atomic<bool>     batchGenerating{false};
     std::atomic<uint64_t> cpuTickCounter{0};
@@ -181,13 +181,6 @@ private:
     // LESSON REFERENCE: Midterm Review — Round-Robin
     //   "If candidate.C == T, then put candidate at the end of R."
     // std::map<int, uint32_t> coreTicksUsed;
-
-    // ── Synchronization ──────────────────────────────────────────────────
-    mutable std::mutex       queueMutex;
-    mutable std::mutex       listMutex;
-    mutable std::mutex       coreMutex;
-    std::condition_variable  schedulerCV;
-    std::condition_variable  coreCV;
 
     // ── Batch generation ─────────────────────────────────────────────────
     int processCounter = 0; // for naming: p01, p02, ...
