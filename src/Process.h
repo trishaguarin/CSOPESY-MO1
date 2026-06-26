@@ -127,8 +127,9 @@ public:
     //   Returns the accumulated PRINT outputs for this process
     const std::vector<std::string>& getOutputLog() const;
 
-    // ── Timestamp helper (reused from fcfs-scheduler branch) ─────────────
+    // ── Timestamp helpers ─────────────────────────────────────────────────
     static std::string getTimestamp();
+    std::string getCreationTimestamp() const;
 
 private:
     int                      pid;

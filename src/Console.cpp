@@ -6,40 +6,30 @@
 //    received from keyboard input. Maintains a list of commands
 //    recognizable. Tokenization of command."
 //
-// MO1 REQUIREMENT: Main menu console
-//   The main loop reads user input and dispatches to the correct handler.
+// LESSON REFERENCE: Midterm Review — "Enter main loop"
+//   "Continuously handle interrupts and system calls. Dispatch user
+//    processes and manage their execution."
 //
-// MO1 REQUIREMENT: initialize gate
-//   All commands except 'exit' and 'clear' should print an error
-//   if !initialized.
+// MO1 REQUIREMENT: Main menu console + initialize gate
 // ============================================================================
 
 #include "Console.h"
 #include "ConfigParser.h"
 #include "Scheduler.h"
-// #include "ScreenManager.h"
-// #include "ReportGenerator.h"
+#include "ScreenManager.h"
+#include "ReportGenerator.h"
 
 #include <iostream>
 #include <string>
-#include <algorithm>
 
-Console::Console()
+Console::Console() = default;
+
+Console::~Console()
 {
-    // TODO: Instantiate subsystems
-    // configParser    = std::make_unique<ConfigParser>();
-    // Note: scheduler and screenManager are created AFTER initialize
-    //       reads config.txt, since Scheduler needs SystemConfig params.
-    configParser = std::make_unique<ConfigParser>();
+    if (scheduler)
+        scheduler->stop();
 }
 
-Console::~Console() = default;
-
-// ── ASCII Header ─────────────────────────────────────────────────────────────
-// MO1 REQUIREMENT: "A main menu console" — present a branded CLI
-// LESSON REFERENCE: Midterm Review activity
-//   "Provide your ASCII text header 'CSOPESY' or a name for your
-//    command line emulator."
 void Console::printHeader()
 {
     std::cout << R"(
@@ -59,11 +49,6 @@ void Console::printHeader()
     std::cout << "\n** IMPORTANT: Type 'initialize' to load config and start system **\n" << std::endl;
 }
 
-// ── Main Loop ────────────────────────────────────────────────────────────────
-// LESSON REFERENCE: Midterm Review — "Enter main loop"
-//   "Continuously handle interrupts and system calls. Dispatch user
-//    processes and manage their execution. Handle user input and
-//    manage I/O operations."
 void Console::run()
 {
     printHeader();
@@ -79,7 +64,7 @@ void Console::run()
         auto ltrim = input.find_first_not_of(" \t\r\n");
         auto rtrim = input.find_last_not_of(" \t\r\n");
         if (ltrim == std::string::npos)
-            continue; // empty input
+            continue;
         input = input.substr(ltrim, rtrim - ltrim + 1);
 
         if (input.empty())
@@ -89,13 +74,8 @@ void Console::run()
     }
 }
 
-// ── Command Dispatcher ───────────────────────────────────────────────────────
-// MO1 REQUIREMENT: recognize initialize, exit, screen, scheduler-start,
-//                  scheduler-stop, report-util
-// LESSON REFERENCE: Midterm Review — "Tokenization of command"
 void Console::processCommand(const std::string& input)
 {
-    // 'exit' always works, even before initialize
     if (input == "exit")
     {
         running = false;
@@ -103,21 +83,19 @@ void Console::processCommand(const std::string& input)
         return;
     }
 
-    // 'clear' always works
     if (input == "clear")
     {
         cmdClear();
         return;
     }
 
-    // 'initialize' — boot the system
     if (input == "initialize")
     {
         cmdInitialize();
         return;
     }
 
-    // ── Gate: everything below requires initialize ──
+    // Gate: everything below requires initialize
     if (!initialized)
     {
         std::cout << "Error: Please run 'initialize' first.\n";
@@ -153,14 +131,6 @@ void Console::processCommand(const std::string& input)
     std::cout << "Unknown command: '" << input << "'\n";
 }
 
-// ── Command Implementations ──────────────────────────────────────────────────
-
-// LESSON REFERENCE: Midterm Review — "Kernel initialization"
-//   "Initialize data structures (process table, file system, etc.)"
-//   "Initialize memory management and scheduling algorithms."
-// MO1 REQUIREMENT: Configuration setting
-//   "The 'initialize' command should read from a 'config.txt' file,
-//    the parameters for your CPU scheduler and process attributes."
 void Console::cmdInitialize()
 {
     if (initialized)
@@ -169,39 +139,25 @@ void Console::cmdInitialize()
         return;
     }
 
-    if (!configParser)
-    {
-        std::cout << "Internal error: Config parser unavailable.\n";
-        return;
-    }
-
+    configParser = std::make_unique<ConfigParser>();
     if (!configParser->loadFromFile("config.txt"))
     {
-        std::cout << "Failed to initialize system. Check config.txt for errors.\n";
+        std::cerr << "Error: Failed to load config.txt. Please ensure it exists.\n";
+        configParser.reset();
         return;
     }
 
-    const SystemConfig& config = configParser->getConfig();
-    std::cout << "Configuration loaded successfully:\n";
-    std::cout << "  num-cpu: " << config.numCpu << "\n";
-    std::cout << "  scheduler: " << config.schedulerAlgo << "\n";
-    std::cout << "  quantum-cycles: " << config.quantumCycles << "\n";
-    std::cout << "  batch-process-freq: " << config.batchProcessFreq << "\n";
-    std::cout << "  min-ins: " << config.minIns << "\n";
-    std::cout << "  max-ins: " << config.maxIns << "\n";
-    std::cout << "  delays-per-exec: " << config.delaysPerExec << "\n";
+    auto cfg = configParser->getConfig();
+    scheduler       = std::make_unique<Scheduler>(cfg);
+    screenManager   = std::make_unique<ScreenManager>(scheduler.get());
+    reportGenerator = std::make_unique<ReportGenerator>(scheduler.get());
 
-    scheduler = std::make_unique<Scheduler>(config);
     scheduler->start();
 
     initialized = true;
-    std::cout << "System initialized. Scheduler started.\n";
+    std::cout << "System initialized.\n";
 }
 
-// MO1 REQUIREMENT: screen command support
-//   "screen -s <name>" — create process + enter screen
-//   "screen -r <name>" — reattach to process screen
-//   "screen -ls"       — list all processes
 void Console::cmdScreen(const std::string& args)
 {
     if (args.empty())
@@ -212,93 +168,64 @@ void Console::cmdScreen(const std::string& args)
 
     if (args == "-ls")
     {
-        // TODO: screenManager->listProcesses();
-        //   Should show: CPU utilization %, cores used, cores available,
-        //   running processes list, finished processes list
-        std::cout << "'screen -ls' — TODO: List all processes.\n";
+        screenManager->listProcesses();
         return;
     }
 
-    if (args.substr(0, 2) == "-s" && args.size() > 3)
+    if (args.size() > 3 && args.substr(0, 2) == "-s" && args[2] == ' ')
     {
         std::string processName = args.substr(3);
-        // TODO: screenManager->createScreen(processName);
-        //   - Create a new Process with the given name
-        //   - Add ICommand objects to its commandList
-        //   - Add to scheduler's ready queue
-        //   - Clear console, enter process screen
-        //   - Inside screen: support 'process-smi' and 'exit'
-        std::cout << "'screen -s " << processName << "' — TODO: Create process.\n";
+        // Trim the name
+        auto lt = processName.find_first_not_of(" \t");
+        auto rt = processName.find_last_not_of(" \t");
+        if (lt == std::string::npos)
+        {
+            std::cout << "Error: Process name cannot be empty.\n";
+            return;
+        }
+        processName = processName.substr(lt, rt - lt + 1);
+        screenManager->createScreen(processName);
+        // After returning from screen, reprint header
+        printHeader();
         return;
     }
 
-    if (args.substr(0, 2) == "-r" && args.size() > 3)
+    if (args.size() > 3 && args.substr(0, 2) == "-r" && args[2] == ' ')
     {
         std::string processName = args.substr(3);
-        // TODO: screenManager->reattachScreen(processName);
-        //   - Find process by name
-        //   - If not found or finished: "Process <name> not found."
-        //   - If found: enter its screen
-        std::cout << "'screen -r " << processName << "' — TODO: Reattach.\n";
+        auto lt = processName.find_first_not_of(" \t");
+        auto rt = processName.find_last_not_of(" \t");
+        if (lt == std::string::npos)
+        {
+            std::cout << "Error: Process name cannot be empty.\n";
+            return;
+        }
+        processName = processName.substr(lt, rt - lt + 1);
+        screenManager->reattachScreen(processName);
+        printHeader();
         return;
     }
 
     std::cout << "Unknown screen subcommand: '" << args << "'\n";
 }
 
-// MO1 REQUIREMENT: scheduler-start
-//   "Every X CPU ticks, a new process is generated and put into the
-//    ready queue. X is set by batch-process-freq in config.txt."
 void Console::cmdSchedulerStart()
 {
-    // TODO: Start the batch process generation loop
-    //   scheduler->startBatchGeneration();
-    //   - Uses batch-process-freq from config
-    //   - Generates processes with randomized ICommand objects
-    //   - Command count between min-ins and max-ins
-    //   - Process names: p01, p02, ..., p1240, etc.
-    if (scheduler)
-    {
-        scheduler->startBatchGeneration();
-        std::cout << "Batch generation started.\n";
-    }
-    else
-    {
-        std::cout << "Scheduler unavailable.\n";
-    }
+    scheduler->startBatchGeneration();
+    std::cout << "Batch process generation started.\n";
 }
 
-// MO1 REQUIREMENT: scheduler-stop
-//   "Stops generating dummy processes."
 void Console::cmdSchedulerStop()
 {
-    // TODO: Stop the batch process generation loop
-    //   scheduler->stopBatchGeneration();
-    if (scheduler)
-    {
-        scheduler->stopBatchGeneration();
-        std::cout << "Batch generation stopped.\n";
-    }
-    else
-    {
-        std::cout << "Scheduler unavailable.\n";
-    }
+    scheduler->stopBatchGeneration();
+    std::cout << "Batch process generation stopped.\n";
 }
 
-// MO1 REQUIREMENT: report-util
-//   "Generate a utilization report. Same as screen -ls but saves to
-//    csopesy-log.txt."
 void Console::cmdReportUtil()
 {
-    // TODO: reportGenerator->saveToFile();
-    //   - CPU utilization %
-    //   - Cores used / cores available
-    //   - Running and finished process lists
-    //   - Save to csopesy-log.txt
-    std::cout << "'report-util' — TODO: Generate report.\n";
+    reportGenerator->saveToFile("csopesy-log.txt");
 }
 
-// Self-explanatory
 void Console::cmdClear()
 {
 #ifdef _WIN32

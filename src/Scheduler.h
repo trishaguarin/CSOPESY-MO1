@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // Scheduler.h — CPU Scheduler (FCFS & Round-Robin)
 // ============================================================================
 // LESSON REFERENCE: Midterm Review — "CPU Scheduling"
@@ -85,24 +85,33 @@ public:
     std::vector<std::shared_ptr<Process>> getRunningProcesses()  const;
     std::vector<std::shared_ptr<Process>> getFinishedProcesses() const;
     std::vector<std::shared_ptr<Process>> getAllProcesses()      const;
+    std::shared_ptr<Process> findProcess(const std::string& name) const;
 
-    int  getNumCores()      const;
-    int  getCoresUsed()     const;
+    int  getNumCores()       const;
+    int  getCoresUsed()      const;
     int  getCoresAvailable() const;
 
-    // TODO: CPU utilization calculation
+    // CPU utilization calculation
     //   LESSON REFERENCE: Midterm Review activity (page 68)
     //     "Provide a function that can be called anytime from the main
     //      thread that writes down the CPU utilization."
-    //   Simple approach: (cores used / total cores) * 100
-    //   Better approach: track cumulative busy ticks / total ticks per core
+    //   Tracks cumulative busy ticks / total ticks across all cores
     float getCpuUtilization() const;
 
     uint64_t getCpuTicks() const;
 
+    const SystemConfig& getConfig() const { return config; }
+
 private:
     // ── Scheduler Thread ─────────────────────────────────────────────────
-    // TODO: Implement the main scheduling loop
+    // Implements the main scheduling loop:
+    //   while (running) {
+    //       cpuTickCounter++;
+    //       // batch generation every batchProcessFreq ticks
+    //       // handle sleeping processes (tick WAITING → READY)
+    //       // assign ready processes to idle cores
+    //       // RR: preempt cores that exceeded quantum
+    //   }
     //
     // LESSON REFERENCE: Midterm Review — "Algorithmic Overview of Round-Robin"
     //   "For each CPU cycle, do the following:
@@ -110,25 +119,6 @@ private:
     //    b. Select the first process in R to be the candidate.
     //    c. Execute candidate. candidate.C++;
     //    d. If candidate.C == T, then perform #b. Put candidate at end of R."
-    //
-    // LESSON REFERENCE: Midterm Review — FCFS
-    //   FCFS: processes run to completion. No preemption.
-    //
-    // Detailed pseudocode:
-    //   while (running) {
-    //       cpuTickCounter++;
-    //
-    //       // ── Batch generation ──
-    //       if (batchGenerating && cpuTickCounter % config.batchProcessFreq == 0)
-    //           generateProcess() → addProcess()
-    //
-    //       // ── Handle sleeping processes ──
-    //       // For each process in WAITING state, call tickSleep()
-    //       // If it wakes up (WAITING → READY), re-add to readyQueue
-    //
-    //       // ── FCFS: Assign ready processes to idle cores ──
-    //       // ── RR: Same but also check quantum preemption ──
-    //   }
     void schedulerLoop();
 
     // ── Core Worker Threads ──────────────────────────────────────────────
@@ -137,7 +127,7 @@ private:
     //    then processes get assigned to a 'core', where its commands
     //    are executed."
     //
-    // TODO: Each core worker:
+    // Each core worker:
     //   1. Waits for a process assignment (via condition variable)
     //   2. Calls process->executeCurrentCommand(coreId) per tick
     //   3. Calls process->moveToNextLine() after each execution
@@ -147,17 +137,16 @@ private:
     void coreWorker(int coreId);
 
     // ── Batch Process Generator ──────────────────────────────────────────
-    // TODO: Generate a new process with:
+    // Generates a new process with:
     //   - Human-readable name (p01, p02, ..., p1240)
     //   - Random command count between min-ins and max-ins (from config)
-    //   - Randomized ICommand types using the concrete command classes
-    //     (PrintCommand, DeclareCommand, AddCommand, etc.)
-    // std::shared_ptr<Process> generateProcess();
+    //   - PrintCommand objects (default "Hello world from <name>!")
+    std::shared_ptr<Process> generateProcess();
 
-    // ── Configuration ───────────────────────────────────────────────────
+    // ── Configuration ────────────────────────────────────────────────────
     SystemConfig config;
 
-    // ── State ───────────────────────────────────────────────────────────
+    // ── State ────────────────────────────────────────────────────────────
     std::atomic<bool>     running{false};
     std::atomic<bool>     batchGenerating{false};
     std::atomic<uint64_t> cpuTickCounter{0};
@@ -175,13 +164,23 @@ private:
     std::vector<bool>                              coreStatus;   // true = busy
     std::map<int, std::shared_ptr<Process>>        coreProcess;  // coreId → process
 
-    // TODO: For Round-Robin — track how many ticks each core has run
+    // For Round-Robin — track how many ticks each core has run
     //   its current process (for quantum preemption)
-    //
     // LESSON REFERENCE: Midterm Review — Round-Robin
     //   "If candidate.C == T, then put candidate at the end of R."
-    // std::map<int, uint32_t> coreTicksUsed;
+    std::map<int, uint32_t> coreTicksUsed;
+
+    // ── Synchronization ──────────────────────────────────────────────────
+    mutable std::mutex       queueMutex;
+    mutable std::mutex       listMutex;
+    mutable std::mutex       coreMutex;
+    std::condition_variable  schedulerCV;
+    std::condition_variable  coreCV;
 
     // ── Batch generation ─────────────────────────────────────────────────
     int processCounter = 0; // for naming: p01, p02, ...
+
+    // ── CPU utilization tracking ─────────────────────────────────────────
+    std::atomic<uint64_t> totalBusyTicks{0};
+    std::atomic<uint64_t> totalIdleTicks{0};
 };

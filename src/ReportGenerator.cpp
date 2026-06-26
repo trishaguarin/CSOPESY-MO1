@@ -1,10 +1,3 @@
-// ============================================================================
-// ReportGenerator.cpp — CPU Utilization Report Implementation
-// ============================================================================
-// LESSON REFERENCE: Midterm Review — "Logging"
-// MO1 REQUIREMENT: report-util + csopesy-log.txt
-// ============================================================================
-
 #include "ReportGenerator.h"
 #include "Scheduler.h"
 #include <iostream>
@@ -19,55 +12,73 @@ ReportGenerator::ReportGenerator(Scheduler* scheduler)
 
 std::string ReportGenerator::generateReport() const
 {
-    // TODO: Build the report string
-    //
-    //   std::ostringstream ss;
-    //
-    //   ss << "CPU utilization: " << scheduler->getCpuUtilization() << "%\n";
-    //   ss << "Cores used: " << scheduler->getCoresUsed() << "\n";
-    //   ss << "Cores available: " << scheduler->getCoresAvailable() << "\n";
-    //   ss << "--------------------------------------\n";
-    //
-    //   ss << "Running processes:\n";
-    //   for (auto& p : scheduler->getRunningProcesses()) {
-    //       ss << p->getName() << "  "
-    //          << Process::getTimestamp() << "  "  // or stored creation time
-    //          << "Core: " << p->getAssignedCore() << "  "
-    //          << p->getCommandCounter() << "/" << p->getTotalCommands() << "\n";
-    //   }
-    //
-    //   ss << "\nFinished processes:\n";
-    //   for (auto& p : scheduler->getFinishedProcesses()) {
-    //       ss << p->getName() << "  "
-    //          << Process::getTimestamp() << "  "
-    //          << "Finished  "
-    //          << p->getTotalCommands() << "/" << p->getTotalCommands() << "\n";
-    //   }
-    //
-    //   ss << "--------------------------------------\n";
-    //
-    //   return ss.str();
+    std::ostringstream ss;
 
-    return ""; // stub
+    float util = scheduler->getCpuUtilization();
+    int coresUsed = scheduler->getCoresUsed();
+    int coresAvailable = scheduler->getCoresAvailable();
+
+    ss << "CPU utilization: " << std::fixed << std::setprecision(0) << util << "%\n";
+    ss << "Cores used: " << coresUsed << "\n";
+    ss << "Cores available: " << coresAvailable << "\n";
+    ss << "--------------------------------------\n";
+
+    auto running = scheduler->getRunningProcesses();
+    auto finished = scheduler->getFinishedProcesses();
+
+    ss << "Running processes:\n";
+    if (running.empty())
+    {
+        ss << "  (none)\n";
+    }
+    else
+    {
+        for (auto& p : running)
+        {
+            ss << "  " << std::left << std::setw(15) << p->getName()
+               << p->getCreationTimestamp() << "   "
+               << "Core: " << p->getAssignedCore() << "   "
+               << p->getCommandCounter() << " / " << p->getTotalCommands() << "\n";
+        }
+    }
+
+    ss << "\nFinished processes:\n";
+    if (finished.empty())
+    {
+        ss << "  (none)\n";
+    }
+    else
+    {
+        for (auto& p : finished)
+        {
+            ss << "  " << std::left << std::setw(15) << p->getName()
+               << p->getCreationTimestamp() << "   "
+               << "Finished" << "   "
+               << p->getTotalCommands() << " / " << p->getTotalCommands() << "\n";
+        }
+    }
+    ss << "--------------------------------------\n";
+
+    return ss.str();
 }
 
 void ReportGenerator::saveToFile(const std::string& filename) const
 {
-    // TODO: Save report to file
-    //
-    //   std::string report = generateReport();
-    //   std::ofstream file(filename);
-    //   if (file.is_open()) {
-    //       file << report;
-    //       file.close();
-    //       std::cout << "Report saved to " << filename << "\n";
-    //   } else {
-    //       std::cerr << "Error: Could not open " << filename << "\n";
-    //   }
+    std::string report = generateReport();
+    std::ofstream file(filename);
+    if (file.is_open())
+    {
+        file << report;
+        file.close();
+        std::cout << "Report saved to " << filename << "\n";
+    }
+    else
+    {
+        std::cerr << "Error: Could not open " << filename << "\n";
+    }
 }
 
 void ReportGenerator::printToConsole() const
 {
-    // TODO: Print report to stdout
-    //   std::cout << generateReport();
+    std::cout << generateReport();
 }
