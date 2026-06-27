@@ -57,9 +57,20 @@ void ScreenManager::reattachScreen(const std::string& processName)
             std::cout << "Process " << processName << " not found.\n";
             return;
         }
+        if (proc->isFinished())
+        {
+            std::cout << "Process " << processName << " not found.\n";
+            return;
+        }
         // Found in scheduler but not in our map — register it
         processMap[processName] = proc;
         enterScreenLoop(proc);
+        return;
+    }
+
+    if (it->second->isFinished())
+    {
+        std::cout << "Process " << processName << " not found.\n";
         return;
     }
 
