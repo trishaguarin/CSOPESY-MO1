@@ -6,6 +6,15 @@
 
 ---
 
+## Group Members
+
+- AGUARIN, Trish Ann Danielle C.
+- MARCELO, Chrystel Anne L.
+- PUNSULAN, Emmanuel Gerald G.
+- QUIJANO, Jan Philip Alexandre​
+
+---
+
 ## Overview
 
 A command-line process multiplexer and CPU scheduler emulator written in C++17.  
@@ -57,16 +66,6 @@ CSOPESY-MO1/
 └── docs/
     └── architecture.md     # Architectural notes (optional)
 ```
-
-### Design Patterns Used (from Midterm Review)
-
-| Pattern | Where | Reference |
-|---------|-------|-----------|
-| **Command Pattern** | ICommand + concrete commands | Midterm Review pp. 51-52 |
-| **PCB (Process Control Block)** | Process class | Midterm Review pp. 49-50 |
-| **Symbol Table** | SymbolTable class | Midterm Review pp. 53-54 |
-| **Thread Workers** | Scheduler core workers | Midterm Review pp. 67-68 |
-| **Single Ready Queue** | Scheduler (Design #1) | Midterm Review p. 73 |
 
 ---
 
@@ -139,8 +138,6 @@ delay-per-exec 0
 
 ## Implementation Status
 
-> **Current state: Skeleton/backbone only — TODOs mark all implementation points.**
-
 | Component | Status | Notes |
 |-----------|--------|-------|
 | Console + command dispatch | ✅ Structure | Commands recognized, TODOs for wiring |
@@ -154,13 +151,15 @@ delay-per-exec 0
 
 ---
 
-## Group Members
+### Design Patterns Used (from Midterm Review)
 
-<!-- TODO: Add your group members here -->
-- Member 1
-- Member 2
-- Member 3
-- Member 4
+| Pattern | Where | Reference |
+|---------|-------|-----------|
+| **Command Pattern** | ICommand + concrete commands | Midterm Review pp. 51-52 |
+| **PCB (Process Control Block)** | Process class | Midterm Review pp. 49-50 |
+| **Symbol Table** | SymbolTable class | Midterm Review pp. 53-54 |
+| **Thread Workers** | Scheduler core workers | Midterm Review pp. 67-68 |
+| **Single Ready Queue** | Scheduler (Design #1) | Midterm Review p. 73 |
 
 ---
 
