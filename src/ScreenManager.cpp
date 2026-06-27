@@ -133,18 +133,7 @@ void ScreenManager::enterScreenLoop(std::shared_ptr<Process> proc)
     system("clear");
 #endif
 
-    std::cout << "Process name: " << proc->getName() << "\n";
-    std::cout << "ID: " << proc->getPID() << "\n\n";
-
-    if (proc->isFinished())
-    {
-        std::cout << "Finished!\n\n";
-    }
-    else
-    {
-        std::cout << "Current instruction line: " << proc->getCommandCounter() << "\n";
-        std::cout << "Lines of code: " << proc->getTotalCommands() << "\n\n";
-    }
+    showProcessInfo(proc);
 
     std::string cmd;
     while (true)
@@ -161,7 +150,7 @@ void ScreenManager::enterScreenLoop(std::shared_ptr<Process> proc)
 
         if (cmd == "exit")
         {
-            break; // return to main menu
+            break;
         }
         else if (cmd == "process-smi")
         {
@@ -177,7 +166,14 @@ void ScreenManager::enterScreenLoop(std::shared_ptr<Process> proc)
 void ScreenManager::showProcessInfo(std::shared_ptr<Process> proc)
 {
     std::cout << "\nProcess name: " << proc->getName() << "\n";
-    std::cout << "ID: " << proc->getPID() << "\n\n";
+    std::cout << "ID: " << proc->getPID() << "\n";
+    std::cout << "Logs:\n";
+
+    const auto& logs = proc->getOutputLog();
+    for (const auto& entry : logs)
+        std::cout << entry << "\n";
+
+    std::cout << "\n";
 
     if (proc->isFinished())
     {
@@ -187,16 +183,5 @@ void ScreenManager::showProcessInfo(std::shared_ptr<Process> proc)
     {
         std::cout << "Current instruction line: " << proc->getCommandCounter() << "\n";
         std::cout << "Lines of code: " << proc->getTotalCommands() << "\n\n";
-    }
-
-    // Show output logs
-    const auto& logs = proc->getOutputLog();
-    if (!logs.empty())
-    {
-        for (const auto& entry : logs)
-        {
-            std::cout << entry << "\n";
-        }
-        std::cout << "\n";
     }
 }
