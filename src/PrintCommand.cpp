@@ -4,13 +4,18 @@
 void PrintCommand::execute(Process* process)
 {
     std::string output;
-    if (message.empty())
+    if (message.empty() && varName.empty())
     {
         output = "Hello world from " + process->getName() + "!";
     }
     else
     {
         output = message;
+        if (!varName.empty())
+        {
+            int val = process->getSymbolTable().getVariable(varName);
+            output += std::to_string(val);
+        }
     }
 
     std::string logEntry = Process::getTimestamp()

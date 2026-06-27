@@ -365,29 +365,20 @@ std::shared_ptr<Process> Scheduler::generateProcess()
 
     auto proc = std::make_shared<Process>(processCounter, name);
 
-    std::uniform_int_distribution<int> typeDist(0, 3);
-    std::uniform_int_distribution<int> valDist(0, 65535);
-    std::uniform_int_distribution<int> sleepDist(1, 255);
-    std::uniform_int_distribution<int> repeatDist(2, 5);
+    // Initialize variable "x" to 0
+    proc->getSymbolTable().setVariable("x", 0);
+
+    std::uniform_int_distribution<int> addDist(1, 10);
 
     for (uint32_t i = 0; i < numInstructions; ++i)
     {
-        int type = typeDist(rng);
-        switch (type)
+        if (i % 2 == 0)
         {
-            case 0:
-                proc->addCommand(std::make_shared<PrintCommand>());
-                break;
-            case 1:
-                proc->addCommand(std::make_shared<DeclareCommand>("x", valDist(rng)));
-                break;
-            case 2:
-                proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(valDist(rng))));
-                break;
-            case 3:
-                //proc->addCommand(std::make_shared<SleepCommand>(sleepDist(rng)));
-                proc->addCommand(std::make_shared<DeclareCommand>("x", valDist(rng)));
-                break;
+            proc->addCommand(std::make_shared<PrintCommand>("Value from: ", "x"));
+        }
+        else
+        {
+            proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(addDist(rng))));
         }
     }
 

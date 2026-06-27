@@ -1,6 +1,7 @@
 #include "ScreenManager.h"
 #include "Scheduler.h"
 #include "PrintCommand.h"
+#include "AddCommand.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -32,10 +33,21 @@ void ScreenManager::createScreen(const std::string& processName)
 
     auto proc = std::make_shared<Process>(pidCounter, processName);
 
-    // Populate with PrintCommands (default behavior from spec)
+    // Initialize variable "x" to 0
+    proc->getSymbolTable().setVariable("x", 0);
+
+    std::uniform_int_distribution<int> addDist(1, 10);
+
     for (uint32_t i = 0; i < numInstructions; ++i)
     {
-        proc->addCommand(std::make_shared<PrintCommand>());
+        if (i % 2 == 0)
+        {
+            proc->addCommand(std::make_shared<PrintCommand>("Value from: ", "x"));
+        }
+        else
+        {
+            proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(addDist(rng))));
+        }
     }
 
     processMap[processName] = proc;
