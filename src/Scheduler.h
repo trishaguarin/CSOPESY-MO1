@@ -38,7 +38,7 @@
 //   "quantum-cycles: The time slice given for each processor if a
 //    round-robin scheduler is used."
 //
-// MO1 REQUIREMENT: delays-per-exec (page 5)
+// MO1 REQUIREMENT: delay-per-exec (page 5)
 //   "Delay before executing the next instruction in CPU cycles.
 //    The delay is a 'busy-waiting' scheme wherein the process remains
 //    in the CPU."
@@ -46,7 +46,7 @@
 // REFERENCE: fcfs-scheduler branch (past activity)
 //   Reusable: worker thread model, ready queue, core assignment logic
 //   Must add: RR preemption, CPU tick model, batch generation,
-//             delays-per-exec, config-driven parameters
+//             delay-per-exec, config-driven parameters
 // ============================================================================
 #pragma once
 
@@ -131,7 +131,7 @@ private:
     //   1. Waits for a process assignment (via condition variable)
     //   2. Calls process->executeCurrentCommand(coreId) per tick
     //   3. Calls process->moveToNextLine() after each execution
-    //   4. Between commands, busy-waits for delays-per-exec ticks
+    //   4. Between commands, busy-waits for delay-per-exec ticks
     //   5. For RR: yields after quantum-cycles ticks
     //   6. When process finishes, is preempted, or SLEEPs, signals scheduler
     void coreWorker(int coreId);

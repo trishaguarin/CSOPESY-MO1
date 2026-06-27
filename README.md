@@ -105,7 +105,7 @@ quantum-cycles 5
 batch-process-freq 1
 min-ins 1000
 max-ins 2000
-delays-per-exec 0
+delay-per-exec 0
 ```
 
 | Parameter            | Description                                  | Range       |
@@ -116,7 +116,7 @@ delays-per-exec 0
 | `batch-process-freq` | New process every X CPU cycles               | [1, 2³²]   |
 | `min-ins`            | Minimum instructions per process             | [1, 2³²]   |
 | `max-ins`            | Maximum instructions per process             | [1, 2³²]   |
-| `delays-per-exec`    | Busy-wait delay ticks between instructions   | [0, 2³²]   |
+| `delay-per-exec`     | Busy-wait delay ticks between instructions   | [0, 2³²]   |
 
 ---
 

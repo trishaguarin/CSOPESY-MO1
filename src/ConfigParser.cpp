@@ -133,12 +133,12 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
             }
             parsedConfig.maxIns = v;
         }
-        else if (key == "delays-per-exec")
+        else if (key == "delay-per-exec")
         {
             uint32_t v;
             if (!parseUint32(value, v))
             {
-                std::cerr << "Error: Invalid delays-per-exec value on line " << lineNumber << ".\n";
+                std::cerr << "Error: Invalid delay-per-exec value on line " << lineNumber << ".\n";
                 loaded = false;
                 return false;
             }

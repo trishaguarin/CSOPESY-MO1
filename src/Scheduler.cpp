@@ -9,7 +9,7 @@
 // REFERENCE: fcfs-scheduler branch (past activity)
 //   The old implementation had schedulerWorker + coreWorker pattern.
 //   That logic is extended here with: RR preemption, CPU tick model,
-//   batch generation, delays-per-exec, and config-driven parameters.
+//   batch generation, delay-per-exec, and config-driven parameters.
 // ============================================================================
 
 #include "Scheduler.h"
@@ -266,7 +266,7 @@ void Scheduler::coreWorker(int coreId)
         uint32_t ticksUsed = 0;
         while (proc && !proc->isFinished() && running.load())
         {
-            // Busy-wait delay (delays-per-exec)
+            // Busy-wait delay (delay-per-exec)
             // Process stays on CPU but does no work
             bool preempted = false;
             for (uint32_t d = 0; d < config.delaysPerExec; ++d)
