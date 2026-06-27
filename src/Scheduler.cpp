@@ -72,6 +72,9 @@ void Scheduler::addProcess(std::shared_ptr<Process> proc)
 
 void Scheduler::startBatchGeneration()
 {
+    // Set lastBatchTime so the first process is generated immediately
+    lastBatchTime = std::chrono::steady_clock::now() -
+        std::chrono::seconds(config.batchProcessFreq);
     batchGenerating = true;
 }
 
@@ -153,17 +156,22 @@ uint64_t Scheduler::getCpuTicks() const
 
 void Scheduler::schedulerLoop()
 {
+    lastBatchTime = std::chrono::steady_clock::now();
+
     while (running.load())
     {
         cpuTickCounter++;
 
-        // ── Batch generation ──
+        // ── Batch generation (time-based) ──
         if (batchGenerating.load())
         {
-            if (cpuTickCounter.load() % config.batchProcessFreq == 0)
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+                now - lastBatchTime).count();
+            if (elapsed >= static_cast<long long>(config.batchProcessFreq))
             {
+                lastBatchTime = now;
                 auto proc = generateProcess();
-                // Add to ready queue but not to allProcesses again (generateProcess already does addProcess-like work)
                 {
                     std::lock_guard<std::mutex> lock(queueMutex);
                     readyQueue.push(proc);
@@ -307,8 +315,13 @@ void Scheduler::coreWorker(int coreId)
             {
                 break; 
             }
+        }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // Sleep once per quantum to simulate CPU time and keep core visibly busy
+        // (Avoids per-instruction sleep which suffers from Windows ~15ms granularity)
+        if (config.delaysPerExec == 0)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(config.quantumCycles));
         }
 
     
