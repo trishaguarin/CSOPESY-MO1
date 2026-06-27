@@ -83,12 +83,6 @@ void Console::processCommand(const std::string& input)
         return;
     }
 
-    if (input == "clear")
-    {
-        cmdClear();
-        return;
-    }
-
     if (input == "initialize")
     {
         cmdInitialize();
@@ -99,6 +93,12 @@ void Console::processCommand(const std::string& input)
     if (!initialized)
     {
         std::cout << "Error: Please run 'initialize' first.\n";
+        return;
+    }
+
+    if (input == "clear")
+    {
+        cmdClear();
         return;
     }
 
