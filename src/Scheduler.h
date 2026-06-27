@@ -181,6 +181,7 @@ private:
     int processCounter = 0; // for naming: p01, p02, ...
 
     // ── CPU utilization tracking ─────────────────────────────────────────
-    std::atomic<uint64_t> totalBusyTicks{0};
-    std::atomic<uint64_t> totalIdleTicks{0};
+    static constexpr int UTIL_WINDOW_SIZE = 50;
+    mutable std::mutex   windowMutex;
+    std::deque<float>    utilizationWindow;
 };

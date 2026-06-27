@@ -9,7 +9,7 @@
 // REFERENCE: fcfs-scheduler branch (past activity)
 //   The old implementation had schedulerWorker + coreWorker pattern.
 //   That logic is extended here with: RR preemption, CPU tick model,
-//   batch generation, delay-per-exec, and config-driven parameters.
+//   batch generation, delays-per-exec, and config-driven parameters.
 // ============================================================================
 
 #include "Scheduler.h"
@@ -145,11 +145,13 @@ int Scheduler::getCoresAvailable() const
 
 float Scheduler::getCpuUtilization() const
 {
-    uint64_t busy = totalBusyTicks.load();
-    uint64_t idle = totalIdleTicks.load();
-    uint64_t total = busy + idle;
-    if (total == 0) return 0.0f;
-    return (static_cast<float>(busy) / static_cast<float>(total)) * 100.0f;
+    std::lock_guard<std::mutex> lock(windowMutex);
+    if (utilizationWindow.empty()) return 0.0f;
+
+    double sum = 0.0;
+    for (float v : utilizationWindow)
+        sum += v;
+    return static_cast<float>(sum / utilizationWindow.size());
 }
 
 uint64_t Scheduler::getCpuTicks() const
@@ -224,16 +226,22 @@ void Scheduler::schedulerLoop()
         }
         coreCV.notify_all();
 
-        // ── Track utilization ──
+        // ── Track utilization (sliding window) ──
         {
-            std::lock_guard<std::mutex> lock(coreMutex);
-            for (int i = 0; i < config.numCpu; ++i)
+            int busyCores = 0;
             {
-                if (coreStatus[i])
-                    totalBusyTicks++;
-                else
-                    totalIdleTicks++;
+                std::lock_guard<std::mutex> lock(coreMutex);
+                for (int i = 0; i < config.numCpu; ++i)
+                    if (coreStatus[i]) busyCores++;
             }
+            float utilPct = (config.numCpu > 0)
+                ? (static_cast<float>(busyCores) / config.numCpu) * 100.0f
+                : 0.0f;
+
+            std::lock_guard<std::mutex> lock(windowMutex);
+            utilizationWindow.push_back(utilPct);
+            if ((int)utilizationWindow.size() > UTIL_WINDOW_SIZE)
+                utilizationWindow.pop_front();
         }
 
         // Small sleep to control tick rate and prevent host CPU hogging
@@ -266,7 +274,7 @@ void Scheduler::coreWorker(int coreId)
         uint32_t ticksUsed = 0;
         while (proc && !proc->isFinished() && running.load())
         {
-            // Busy-wait delay (delay-per-exec)
+            // Busy-wait delay (delays-per-exec)
             // Process stays on CPU but does no work
             bool preempted = false;
             for (uint32_t d = 0; d < config.delaysPerExec; ++d)
@@ -352,7 +360,7 @@ std::shared_ptr<Process> Scheduler::generateProcess()
 
     // Name format: p01, p02, ..., p10, p100, etc.
     std::ostringstream nameStream;
-    nameStream << "p" << std::setw(2) << std::setfill('0') << processCounter;
+    nameStream << "process" << std::setw(2) << std::setfill('0') << processCounter;
     std::string name = nameStream.str();
 
     // Random instruction count between min-ins and max-ins
