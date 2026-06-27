@@ -208,6 +208,7 @@ void Console::cmdSchedulerStop()
 
 void Console::cmdReportUtil()
 {
+    reportGenerator->printToConsole();
     reportGenerator->saveToFile("csopesy-log.txt");
 }
 
