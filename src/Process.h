@@ -29,6 +29,18 @@ public:
     void executeCurrentCommand(int coreId);
     void moveToNextLine();
 
+    // ── Display Snapshot (atomic read of state + core together) ──────────
+    struct DisplaySnapshot
+    {
+        ProcessState state;
+        int          assignedCore;
+        int          commandCounter;
+        int          totalCommands;
+        std::string  name;
+        std::string  creationTimestamp;
+    };
+    DisplaySnapshot getDisplaySnapshot() const;
+
     // ── Getters ──────────────────────────────────────────────────────────
     int                getPID()             const;
     std::string        getName()            const;
@@ -74,5 +86,5 @@ private:
 
     std::vector<std::string> outputLog;
 
-    std::mutex processMutex; // thread safety
+    mutable std::mutex processMutex; // thread safety (mutable: lockable in const methods)
 };

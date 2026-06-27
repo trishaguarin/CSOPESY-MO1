@@ -14,6 +14,19 @@ Process::Process(int pid, const std::string& name)
 
 Process::~Process() = default;
 
+Process::DisplaySnapshot Process::getDisplaySnapshot() const
+{
+    std::lock_guard<std::mutex> lock(processMutex);
+    DisplaySnapshot s;
+    s.state           = state.load();
+    s.assignedCore    = assignedCore.load();
+    s.commandCounter  = commandCounter;
+    s.totalCommands   = static_cast<int>(commandList.size());
+    s.name            = name;
+    s.creationTimestamp = getCreationTimestamp();
+    return s;
+}
+
 // ── Command Management ───────────────────────────────────────────────────────
 
 void Process::addCommand(std::shared_ptr<ICommand> command)

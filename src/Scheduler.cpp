@@ -193,9 +193,11 @@ void Scheduler::schedulerLoop()
             }
         }
 
-        // ── Assign ready processes to idle cores ──
+        // ── Assign ready processes and Track utilization ──
         {
             std::lock_guard<std::mutex> lock(coreMutex);
+            
+            // 1. Assign ready processes to idle cores
             for (int i = 0; i < config.numCpu; ++i)
             {
                 if (!coreStatus[i])
@@ -206,33 +208,30 @@ void Scheduler::schedulerLoop()
                     auto proc = readyQueue.front();
                     readyQueue.pop();
 
-                    proc->setState(Process::RUNNING);
-                    proc->setAssignedCore(i);
-                    coreStatus[i] = true;
-                    coreProcess[i] = proc;
+                    proc->setAssignedCore(i);          // 1. record which core
+                    coreStatus[i] = true;              // 2. mark core busy
+                    coreProcess[i] = proc;             // 3. register mapping
                     coreTicksUsed[i] = 0;
+                    proc->setState(Process::RUNNING);  // 4. NOW make it visible as RUNNING
                 }
             }
-        }
-        coreCV.notify_all();
-
-        // ── Track utilization (sliding window) ──
-        {
+            
+            // 2. Track utilization (sliding window) while we still hold the lock
             int busyCores = 0;
+            for (int i = 0; i < config.numCpu; ++i)
             {
-                std::lock_guard<std::mutex> lock(coreMutex);
-                for (int i = 0; i < config.numCpu; ++i)
-                    if (coreStatus[i]) busyCores++;
+                if (coreStatus[i]) busyCores++;
             }
             float utilPct = (config.numCpu > 0)
                 ? (static_cast<float>(busyCores) / config.numCpu) * 100.0f
                 : 0.0f;
 
-            std::lock_guard<std::mutex> lock(windowMutex);
+            std::lock_guard<std::mutex> wlock(windowMutex);
             utilizationWindow.push_back(utilPct);
             if ((int)utilizationWindow.size() > UTIL_WINDOW_SIZE)
                 utilizationWindow.pop_front();
         }
+        coreCV.notify_all();
 
         // Small sleep to control tick rate and prevent host CPU hogging
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -373,6 +372,7 @@ std::shared_ptr<Process> Scheduler::generateProcess()
                 proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(valDist(rng))));
                 break;
             case 3:
+                //proc->addCommand(std::make_shared<SleepCommand>(sleepDist(rng)));
                 proc->addCommand(std::make_shared<DeclareCommand>("x", valDist(rng)));
                 break;
         }

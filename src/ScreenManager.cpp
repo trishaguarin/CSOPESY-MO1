@@ -88,22 +88,49 @@ void ScreenManager::listProcesses()
     std::cout << "Cores available: " << coresAvailable << "\n";
     std::cout << "--------------------------------------\n";
 
-    auto running = scheduler->getRunningProcesses();
+    auto allActive = scheduler->getRunningProcesses();
     auto finished = scheduler->getFinishedProcesses();
 
+    // Take atomic snapshot of each process to avoid TOCTOU race
+    // (state and assignedCore must be read together, not separately)
+    std::vector<Process::DisplaySnapshot> runningSnaps;
+    std::vector<Process::DisplaySnapshot> waitingSnaps;
+
+    for (auto& p : allActive)
+    {
+        auto snap = p->getDisplaySnapshot();
+        if (snap.state == Process::RUNNING && snap.assignedCore >= 0)
+            runningSnaps.push_back(snap);
+        else if (snap.state == Process::WAITING)
+            waitingSnaps.push_back(snap);
+        // READY or mid-transition: skip (process is between states)
+    }
+
     std::cout << "Running processes:\n";
-    if (running.empty())
+    if (runningSnaps.empty())
     {
         std::cout << "  (none)\n";
     }
     else
     {
-        for (auto& p : running)
+        for (auto& s : runningSnaps)
         {
-            std::cout << "  " << std::left << std::setw(15) << p->getName()
-                      << p->getCreationTimestamp() << "   "
-                      << "Core: " << p->getAssignedCore() << "   "
-                      << p->getCommandCounter() << " / " << p->getTotalCommands() << "\n";
+            std::cout << "  " << std::left << std::setw(15) << s.name
+                      << s.creationTimestamp << "   "
+                      << "Core: " << s.assignedCore << "   "
+                      << s.commandCounter << " / " << s.totalCommands << "\n";
+        }
+    }
+
+    if (!waitingSnaps.empty())
+    {
+        std::cout << "\nSleeping processes:\n";
+        for (auto& s : waitingSnaps)
+        {
+            std::cout << "  " << std::left << std::setw(15) << s.name
+                      << s.creationTimestamp << "   "
+                      << "Sleeping   "
+                      << s.commandCounter << " / " << s.totalCommands << "\n";
         }
     }
 

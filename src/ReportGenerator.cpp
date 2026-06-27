@@ -23,22 +23,45 @@ std::string ReportGenerator::generateReport() const
     ss << "Cores available: " << coresAvailable << "\n";
     ss << "--------------------------------------\n";
 
-    auto running = scheduler->getRunningProcesses();
+    auto allActive = scheduler->getRunningProcesses();
     auto finished = scheduler->getFinishedProcesses();
 
+    std::vector<Process::DisplaySnapshot> runningSnaps;
+    std::vector<Process::DisplaySnapshot> waitingSnaps;
+    for (auto& p : allActive)
+    {
+        auto snap = p->getDisplaySnapshot();
+        if (snap.state == Process::RUNNING && snap.assignedCore >= 0)
+            runningSnaps.push_back(snap);
+        else if (snap.state == Process::WAITING)
+            waitingSnaps.push_back(snap);
+    }
+
     ss << "Running processes:\n";
-    if (running.empty())
+    if (runningSnaps.empty())
     {
         ss << "  (none)\n";
     }
     else
     {
-        for (auto& p : running)
+        for (auto& s : runningSnaps)
         {
-            ss << "  " << std::left << std::setw(15) << p->getName()
-               << p->getCreationTimestamp() << "   "
-               << "Core: " << p->getAssignedCore() << "   "
-               << p->getCommandCounter() << " / " << p->getTotalCommands() << "\n";
+            ss << "  " << std::left << std::setw(15) << s.name
+               << s.creationTimestamp << "   "
+               << "Core: " << s.assignedCore << "   "
+               << s.commandCounter << " / " << s.totalCommands << "\n";
+        }
+    }
+
+    if (!waitingSnaps.empty())
+    {
+        ss << "\nSleeping processes:\n";
+        for (auto& s : waitingSnaps)
+        {
+            ss << "  " << std::left << std::setw(15) << s.name
+               << s.creationTimestamp << "   "
+               << "Sleeping   "
+               << s.commandCounter << " / " << s.totalCommands << "\n";
         }
     }
 

@@ -95,7 +95,7 @@ void Console::processCommand(const std::string& input)
         return;
     }
 
-    if (input == "scheduler-start")
+    if (input == "scheduler-test")
     {
         cmdSchedulerStart();
         return;
