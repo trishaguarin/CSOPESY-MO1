@@ -82,6 +82,7 @@ private:
 
     // ── Batch generation ─────────────────────────────────────────────────
     int processCounter = 0;
+    std::chrono::steady_clock::time_point lastBatchTime;
 
     // ── CPU utilization tracking ─────────────────────────────────────────
     static constexpr int UTIL_WINDOW_SIZE = 50;
