@@ -394,7 +394,8 @@ std::shared_ptr<Process> Scheduler::generateProcess()
                 proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(valDist(rng))));
                 break;
             case 3:
-                proc->addCommand(std::make_shared<SleepCommand>(sleepDist(rng)));
+                //proc->addCommand(std::make_shared<SleepCommand>(sleepDist(rng)));
+                proc->addCommand(std::make_shared<DeclareCommand>("x", valDist(rng)));
                 break;
         }
     }
