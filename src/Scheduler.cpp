@@ -1,17 +1,3 @@
-// ============================================================================
-// Scheduler.cpp — CPU Scheduler Implementation
-// ============================================================================
-// LESSON REFERENCE: Midterm Review — "Emulating a CPU scheduler"
-//   "We need the following: process representation, scheduler
-//    representation, and a way to debug/verify the correctness of
-//    our chosen scheduling algorithm."
-//
-// REFERENCE: fcfs-scheduler branch (past activity)
-//   The old implementation had schedulerWorker + coreWorker pattern.
-//   That logic is extended here with: RR preemption, CPU tick model,
-//   batch generation, delays-per-exec, and config-driven parameters.
-// ============================================================================
-
 #include "Scheduler.h"
 #include "PrintCommand.h"
 #include <algorithm>
@@ -300,9 +286,7 @@ void Scheduler::coreWorker(int coreId)
             proc->executeCurrentCommand(coreId);
             ticksUsed++;
 
-            // Check if process went to WAITING (SLEEP command)
-            // FIX: state is updated to WAITING inside executeCurrentCommand/setSleepTicks.
-            // Only clear assignedCore AFTER state is confirmed changed to avoid Core:-1 race.
+
             if (proc->getState() == Process::WAITING)
             {
                 // State is already WAITING — safe to clear core now
@@ -313,7 +297,6 @@ void Scheduler::coreWorker(int coreId)
             proc->moveToNextLine();
 
             // Check if finished after moveToNextLine
-            // state is now FINISHED — safe to clear core
             if (proc->isFinished())
             {
                 proc->setAssignedCore(-1);
@@ -323,19 +306,15 @@ void Scheduler::coreWorker(int coreId)
             // RR: check quantum after instruction execution
             if (config.schedulerAlgo == "rr" && ticksUsed >= config.quantumCycles)
             {
-                break; // preempt — do NOT clear core here; cleanup block handles it
+                break; 
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
-        // Core is now free — cleanup
-        // FIX: Re-queue the process BEFORE marking the core as free.
-        // This closes the window where coreStatus[i]==false but the process
-        // isn't in the ready queue yet, which caused "Cores available" to
-        // flicker incorrectly during screen -ls.
+    
         {
-            // RR preemption: if process not finished and not sleeping, re-queue first
+            
             if (proc && !proc->isFinished() && proc->getState() != Process::WAITING)
             {
                 proc->setState(Process::READY);
@@ -346,7 +325,7 @@ void Scheduler::coreWorker(int coreId)
                 }
             }
 
-            // Now mark core as free (process is already re-queued or terminal)
+            
             std::lock_guard<std::mutex> lock(coreMutex);
             coreStatus[coreId] = false;
             coreProcess.erase(coreId);
@@ -394,7 +373,6 @@ std::shared_ptr<Process> Scheduler::generateProcess()
                 proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(valDist(rng))));
                 break;
             case 3:
-                //proc->addCommand(std::make_shared<SleepCommand>(sleepDist(rng)));
                 proc->addCommand(std::make_shared<DeclareCommand>("x", valDist(rng)));
                 break;
         }

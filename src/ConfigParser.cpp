@@ -1,14 +1,3 @@
-// ============================================================================
-// ConfigParser.cpp — config.txt Reader Implementation
-// ============================================================================
-// MO1 REQUIREMENT: Configuration setting
-//   Parse the space-separated config.txt file.
-//
-// REFERENCE: The old Config.h in FCFS-scheduler/ had hardcoded values:
-//   CORE_COUNT = 4, PROCESS_COUNT = 10, PRINTS_PER_PROCESS = 100
-//   These must now come from config.txt at runtime.
-// ============================================================================
-
 #include "ConfigParser.h"
 #include <fstream>
 #include <sstream>

@@ -1,23 +1,3 @@
-// ============================================================================
-// ConfigParser.h — config.txt Reader
-// ============================================================================
-// LESSON REFERENCE: Midterm Review — "Kernel initialization"
-//   "Initialize data structures (process table, file system, etc.)"
-//   "Initialize memory management and scheduling algorithms."
-//   The config.txt file provides the parameters for these subsystems.
-// MO1 REQUIREMENT: Configuration setting
-//   "The 'initialize' command should read from a 'config.txt' file,
-//    the parameters for your CPU scheduler and process attributes."
-//
-// MO1 REQUIREMENT: config.txt format (page 5)
-//   num-cpu             [1, 128]
-//   scheduler           "fcfs" or "rr"
-//   quantum-cycles      [1, 2^32]
-//   batch-process-freq  [1, 2^32]
-//   min-ins             [1, 2^32]
-//   max-ins             [1, 2^32]
-//   delay-per-exec     [0, 2^32]
-// ============================================================================
 #pragma once
 
 #include <string>
@@ -38,23 +18,12 @@ struct SystemConfig
 class ConfigParser
 {
 public:
-    // TODO: Parse config.txt and populate a SystemConfig struct
-    //   - Open "config.txt"
-    //   - Read line-by-line, split by space
-    //   - Map key → field in SystemConfig
-    //   - Strip quotes from scheduler value ("fcfs" → fcfs)
-    //   - Validate ranges per spec
-    //   - Return false if file not found or invalid
-    // DONE: Implemented in ConfigParser.cpp
-    bool loadFromFile(const std::string& filepath);
 
-    // Returns the parsed config (only valid after successful loadFromFile)
+    bool loadFromFile(const std::string& filepath);
     const SystemConfig& getConfig() const;
 
 private:
     SystemConfig config;
     bool loaded = false;
 
-    // TODO: Helper to parse a single key-value line
-    // void parseLine(const std::string& key, const std::string& value);
 };

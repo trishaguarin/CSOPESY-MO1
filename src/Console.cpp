@@ -1,18 +1,3 @@
-// ============================================================================
-// Console.cpp — CLI Console Implementation
-// ============================================================================
-// LESSON REFERENCE: Midterm Review — "Command interpreter"
-//   "Developing a command interpreter require processing of commands
-//    received from keyboard input. Maintains a list of commands
-//    recognizable. Tokenization of command."
-//
-// LESSON REFERENCE: Midterm Review — "Enter main loop"
-//   "Continuously handle interrupts and system calls. Dispatch user
-//    processes and manage their execution."
-//
-// MO1 REQUIREMENT: Main menu console + initialize gate
-// ============================================================================
-
 #include "Console.h"
 #include "ConfigParser.h"
 #include "Scheduler.h"
