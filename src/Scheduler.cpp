@@ -289,8 +289,11 @@ void Scheduler::coreWorker(int coreId)
             ticksUsed++;
 
             // Check if process went to WAITING (SLEEP command)
+            // FIX: state is updated to WAITING inside executeCurrentCommand/setSleepTicks.
+            // Only clear assignedCore AFTER state is confirmed changed to avoid Core:-1 race.
             if (proc->getState() == Process::WAITING)
             {
+                // State is already WAITING — safe to clear core now
                 proc->setAssignedCore(-1);
                 break;
             }
@@ -298,6 +301,7 @@ void Scheduler::coreWorker(int coreId)
             proc->moveToNextLine();
 
             // Check if finished after moveToNextLine
+            // state is now FINISHED — safe to clear core
             if (proc->isFinished())
             {
                 proc->setAssignedCore(-1);
@@ -307,28 +311,32 @@ void Scheduler::coreWorker(int coreId)
             // RR: check quantum after instruction execution
             if (config.schedulerAlgo == "rr" && ticksUsed >= config.quantumCycles)
             {
-                break; // preempt
+                break; // preempt — do NOT clear core here; cleanup block handles it
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
-        // Core is now free
+        // Core is now free — cleanup
+        // FIX: Re-queue the process BEFORE marking the core as free.
+        // This closes the window where coreStatus[i]==false but the process
+        // isn't in the ready queue yet, which caused "Cores available" to
+        // flicker incorrectly during screen -ls.
         {
-            std::lock_guard<std::mutex> lock(coreMutex);
-            coreStatus[coreId] = false;
-
-            // RR preemption: if process not finished and not sleeping, re-queue
+            // RR preemption: if process not finished and not sleeping, re-queue first
             if (proc && !proc->isFinished() && proc->getState() != Process::WAITING)
             {
                 proc->setState(Process::READY);
                 proc->setAssignedCore(-1);
                 {
                     std::lock_guard<std::mutex> qlock(queueMutex);
-                    readyQueue.push(proc);
+                    readyQueue.push(proc); // ← re-queue BEFORE freeing core
                 }
             }
 
+            // Now mark core as free (process is already re-queued or terminal)
+            std::lock_guard<std::mutex> lock(coreMutex);
+            coreStatus[coreId] = false;
             coreProcess.erase(coreId);
             coreTicksUsed[coreId] = 0;
         }
