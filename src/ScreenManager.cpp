@@ -1,6 +1,7 @@
 #include "ScreenManager.h"
 #include "Scheduler.h"
 #include "PrintCommand.h"
+#include "MemoryAllocator.h"
 #include "AddCommand.h"
 #include <iostream>
 #include <iomanip>
@@ -98,6 +99,17 @@ void ScreenManager::listProcesses()
     std::cout << "CPU utilization: " << std::fixed << std::setprecision(0) << util << "%\n";
     std::cout << "Cores used: " << coresUsed << "\n";
     std::cout << "Cores available: " << coresAvailable << "\n";
+
+    auto* memAlloc = scheduler->getMemoryAllocator();
+    if (memAlloc)
+    {
+        uint32_t usedMem = memAlloc->getUsedMemory();
+        uint32_t totalMem = memAlloc->getTotalMemory();
+        uint32_t extFrag = memAlloc->getExternalFragmentation();
+        std::cout << "Memory Usage: " << usedMem << " / " << totalMem << "\n";
+        std::cout << "External Fragmentation: " << extFrag << "\n";
+    }
+
     std::cout << "--------------------------------------\n";
 
     auto allActive = scheduler->getRunningProcesses();

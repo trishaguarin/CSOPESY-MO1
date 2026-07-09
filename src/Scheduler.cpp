@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <random>
 #include <chrono>
+#include <fstream>
+#include <filesystem>
 
 #include "DeclareCommand.h"
 #include "AddCommand.h"
@@ -15,6 +17,8 @@ Scheduler::Scheduler(const SystemConfig& config)
     : config(config)
 {
     coreStatus.assign(config.numCpu, false);
+    memoryAllocator = std::make_unique<MemoryAllocator>(
+        config.maxOverallMem, config.memPerProc, config.memPerFrame);
 }
 
 Scheduler::~Scheduler()
@@ -205,7 +209,7 @@ void Scheduler::schedulerLoop()
         {
             std::lock_guard<std::mutex> lock(coreMutex);
             
-            // 1. Assign ready processes to idle cores
+            // 1. Assign ready processes to idle cores (with memory gating)
             for (int i = 0; i < config.numCpu; ++i)
             {
                 if (!coreStatus[i])
@@ -215,6 +219,18 @@ void Scheduler::schedulerLoop()
 
                     auto proc = readyQueue.front();
                     readyQueue.pop();
+
+                    // Try to allocate memory for this process (skip if already has memory from preemption)
+                    if (!memoryAllocator->hasAllocation(proc->getName()))
+                    {
+                        bool hasMemory = memoryAllocator->allocate(proc->getName());
+                        if (!hasMemory)
+                        {
+                            // Memory full — push back to tail of ready queue
+                            readyQueue.push(proc);
+                            continue;
+                        }
+                    }
 
                     proc->setAssignedCore(i);          // 1. record which core
                     coreStatus[i] = true;              // 2. mark core busy
@@ -240,6 +256,13 @@ void Scheduler::schedulerLoop()
                 utilizationWindow.pop_front();
         }
         coreCV.notify_all();
+
+        // ── Memory stamp every quantum-cycles ticks ──
+        quantumCycleCount++;
+        if (quantumCycleCount % config.quantumCycles == 0)
+        {
+            writeMemoryStamp();
+        }
 
         // Small sleep to control tick rate and prevent host CPU hogging
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -307,6 +330,8 @@ void Scheduler::coreWorker(int coreId)
             if (proc->isFinished())
             {
                 proc->setAssignedCore(-1);
+                // Release memory when process finishes
+                memoryAllocator->deallocate(proc->getName());
                 break;
             }
 
@@ -383,4 +408,49 @@ std::shared_ptr<Process> Scheduler::generateProcess()
     }
 
     return proc;
+}
+
+// ── Memory Stamp ─────────────────────────────────────────────────────────────
+
+void Scheduler::writeMemoryStamp()
+{
+    uint64_t qq = quantumCycleCount / config.quantumCycles;
+
+    std::filesystem::create_directories("MEM_STAMPS");
+
+    std::ostringstream filename;
+    filename << "MEM_STAMPS/memory_stamp_" << qq << ".txt";
+
+    // Get timestamp
+    auto now = std::chrono::system_clock::now();
+    auto time_t_now = std::chrono::system_clock::to_time_t(now);
+    std::tm tm_now;
+#ifdef _WIN32
+    localtime_s(&tm_now, &time_t_now);
+#else
+    localtime_r(&time_t_now, &tm_now);
+#endif
+
+
+    std::ostringstream ts;
+    ts << "(" << std::setw(2) << std::setfill('0') << (tm_now.tm_mon + 1) << "/"
+       << std::setw(2) << std::setfill('0') << tm_now.tm_mday << "/"
+       << (tm_now.tm_year + 1900) << " "
+       << std::setw(2) << std::setfill('0') << ((tm_now.tm_hour % 12 == 0) ? 12 : tm_now.tm_hour % 12) << ":"
+       << std::setw(2) << std::setfill('0') << tm_now.tm_min << ":"
+       << std::setw(2) << std::setfill('0') << tm_now.tm_sec
+       << (tm_now.tm_hour >= 12 ? "PM" : "AM") << ")";
+
+    int procCount = memoryAllocator->getProcessCount();
+    uint32_t extFrag = memoryAllocator->getExternalFragmentation();
+
+    std::ofstream file(filename.str());
+    if (file.is_open())
+    {
+        file << "Timestamp: " << ts.str() << "\n";
+        file << "Number of processes in memory: " << procCount << "\n\n";
+        file << "Total external fragmentation in KB: " << (extFrag / 1024) << "\n\n";
+        file << memoryAllocator->getMemoryStamp();
+        file.close();
+    }
 }

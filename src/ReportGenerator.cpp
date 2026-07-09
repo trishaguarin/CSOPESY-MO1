@@ -1,5 +1,6 @@
 #include "ReportGenerator.h"
 #include "Scheduler.h"
+#include "MemoryAllocator.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -21,6 +22,17 @@ std::string ReportGenerator::generateReport() const
     ss << "CPU utilization: " << std::fixed << std::setprecision(0) << util << "%\n";
     ss << "Cores used: " << coresUsed << "\n";
     ss << "Cores available: " << coresAvailable << "\n";
+
+    auto* memAlloc = scheduler->getMemoryAllocator();
+    if (memAlloc)
+    {
+        uint32_t usedMem = memAlloc->getUsedMemory();
+        uint32_t totalMem = memAlloc->getTotalMemory();
+        uint32_t extFrag = memAlloc->getExternalFragmentation();
+        ss << "Memory Usage: " << usedMem << " / " << totalMem << "\n";
+        ss << "External Fragmentation: " << extFrag << "\n";
+    }
+
     ss << "--------------------------------------\n";
 
     auto allActive = scheduler->getRunningProcesses();

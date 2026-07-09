@@ -13,6 +13,11 @@ struct SystemConfig
     uint32_t     minIns            = 1000;
     uint32_t     maxIns            = 2000;
     uint32_t     delaysPerExec     = 0;
+
+    // Memory management
+    uint32_t     maxOverallMem     = 16384;
+    uint32_t     memPerFrame       = 16;
+    uint32_t     memPerProc        = 4096;
 };
 
 class ConfigParser

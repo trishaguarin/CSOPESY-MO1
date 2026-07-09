@@ -2,6 +2,7 @@
 
 #include "Process.h"
 #include "ConfigParser.h"
+#include "MemoryAllocator.h"
 
 #include <queue>
 #include <vector>
@@ -44,6 +45,7 @@ public:
     uint64_t getCpuTicks() const;
 
     const SystemConfig& getConfig() const { return config; }
+    MemoryAllocator* getMemoryAllocator() const { return memoryAllocator.get(); }
 
 private:
     void schedulerLoop();
@@ -54,6 +56,9 @@ private:
 
     // ── Configuration ────────────────────────────────────────────────────
     SystemConfig config;
+
+    // ── Memory Allocator ─────────────────────────────────────────────────
+    std::unique_ptr<MemoryAllocator> memoryAllocator;
 
     // ── State ────────────────────────────────────────────────────────────
     std::atomic<bool>     running{false};
@@ -83,6 +88,10 @@ private:
     // ── Batch generation ─────────────────────────────────────────────────
     int processCounter = 0;
     std::chrono::steady_clock::time_point lastBatchTime;
+
+    // ── Memory stamp tracking ────────────────────────────────────────────
+    uint64_t quantumCycleCount = 0;
+    void writeMemoryStamp();
 
     // ── CPU utilization tracking ─────────────────────────────────────────
     static constexpr int UTIL_WINDOW_SIZE = 50;

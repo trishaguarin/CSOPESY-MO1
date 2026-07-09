@@ -133,11 +133,42 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
             }
             parsedConfig.delaysPerExec = v;
         }
+        else if (key == "max-overall-mem")
+        {
+            uint32_t v;
+            if (!parseUint32(value, v) || v < 1)
+            {
+                std::cerr << "Error: Invalid max-overall-mem value on line " << lineNumber << ".\n";
+                loaded = false;
+                return false;
+            }
+            parsedConfig.maxOverallMem = v;
+        }
+        else if (key == "mem-per-frame")
+        {
+            uint32_t v;
+            if (!parseUint32(value, v) || v < 1)
+            {
+                std::cerr << "Error: Invalid mem-per-frame value on line " << lineNumber << ".\n";
+                loaded = false;
+                return false;
+            }
+            parsedConfig.memPerFrame = v;
+        }
+        else if (key == "mem-per-proc")
+        {
+            uint32_t v;
+            if (!parseUint32(value, v) || v < 1)
+            {
+                std::cerr << "Error: Invalid mem-per-proc value on line " << lineNumber << ".\n";
+                loaded = false;
+                return false;
+            }
+            parsedConfig.memPerProc = v;
+        }
         else
         {
-            std::cerr << "Error: Unknown config key '" << key << "' on line " << lineNumber << ".\n";
-            loaded = false;
-            return false;
+            // Ignore unknown keys (forward compatibility)
         }
     }
 
