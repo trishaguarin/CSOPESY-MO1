@@ -27,6 +27,7 @@ private:
     void cmdSchedulerStart();
     void cmdSchedulerStop();
     void cmdReportUtil();
+    void cmdVmstat();
     void cmdClear();
 
     // State

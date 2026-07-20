@@ -1,4 +1,6 @@
 #include "Scheduler.h"
+#include "FlatMemoryAllocator.h"
+#include "PagingAllocator.h"
 #include "PrintCommand.h"
 #include <algorithm>
 #include <iostream>
@@ -17,8 +19,20 @@ Scheduler::Scheduler(const SystemConfig& config)
     : config(config)
 {
     coreStatus.assign(config.numCpu, false);
-    memoryAllocator = std::make_unique<MemoryAllocator>(
-        config.maxOverallMem, config.memPerProc, config.memPerFrame);
+
+    // Auto-detect allocator type:
+    // If mem-per-frame == max-overall-mem, it's flat (one big frame = whole memory)
+    // Otherwise, it's paging
+    if (config.memPerFrame >= config.maxOverallMem)
+    {
+        memoryAllocator = std::make_unique<FlatMemoryAllocator>(
+            config.maxOverallMem, config.memPerProc, config.memPerFrame);
+    }
+    else
+    {
+        memoryAllocator = std::make_unique<PagingAllocator>(
+            config.maxOverallMem, config.memPerProc, config.memPerFrame);
+    }
 }
 
 Scheduler::~Scheduler()
@@ -223,7 +237,7 @@ void Scheduler::schedulerLoop()
                     // Try to allocate memory for this process (skip if already has memory from preemption)
                     if (!memoryAllocator->hasAllocation(proc->getName()))
                     {
-                        bool hasMemory = memoryAllocator->allocate(proc->getName());
+                        bool hasMemory = memoryAllocator->allocateForProcess(proc->getName());
                         if (!hasMemory)
                         {
                             // Memory full — push back to tail of ready queue
@@ -331,7 +345,7 @@ void Scheduler::coreWorker(int coreId)
             {
                 proc->setAssignedCore(-1);
                 // Release memory when process finishes
-                memoryAllocator->deallocate(proc->getName());
+                memoryAllocator->deallocateProcess(proc->getName());
                 break;
             }
 
@@ -449,8 +463,10 @@ void Scheduler::writeMemoryStamp()
     {
         file << "Timestamp: " << ts.str() << "\n";
         file << "Number of processes in memory: " << procCount << "\n\n";
-        file << "Total external fragmentation in KB: " << (extFrag / 1024) << "\n\n";
-        file << memoryAllocator->getMemoryStamp();
+        file << "Total external fragmentation in KB: " << (extFrag / 1024) << "\n";
+        file << "num-pages-in: " << memoryAllocator->getNumPagedIn() << "\n";
+        file << "num-pages-out: " << memoryAllocator->getNumPagedOut() << "\n\n";
+        file << memoryAllocator->visualizeMemory();
         file.close();
     }
 }

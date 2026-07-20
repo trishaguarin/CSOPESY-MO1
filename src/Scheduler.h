@@ -2,7 +2,7 @@
 
 #include "Process.h"
 #include "ConfigParser.h"
-#include "MemoryAllocator.h"
+#include "IMemoryAllocator.h"
 
 #include <queue>
 #include <vector>
@@ -45,7 +45,7 @@ public:
     uint64_t getCpuTicks() const;
 
     const SystemConfig& getConfig() const { return config; }
-    MemoryAllocator* getMemoryAllocator() const { return memoryAllocator.get(); }
+    IMemoryAllocator* getMemoryAllocator() const { return memoryAllocator.get(); }
 
 private:
     void schedulerLoop();
@@ -58,7 +58,7 @@ private:
     SystemConfig config;
 
     // ── Memory Allocator ─────────────────────────────────────────────────
-    std::unique_ptr<MemoryAllocator> memoryAllocator;
+    std::unique_ptr<IMemoryAllocator> memoryAllocator;
 
     // ── State ────────────────────────────────────────────────────────────
     std::atomic<bool>     running{false};

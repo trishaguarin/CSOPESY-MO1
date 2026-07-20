@@ -1,7 +1,7 @@
 #include "ScreenManager.h"
 #include "Scheduler.h"
 #include "PrintCommand.h"
-#include "MemoryAllocator.h"
+#include "IMemoryAllocator.h"
 #include "AddCommand.h"
 #include <iostream>
 #include <iomanip>
@@ -108,6 +108,8 @@ void ScreenManager::listProcesses()
         uint32_t extFrag = memAlloc->getExternalFragmentation();
         std::cout << "Memory Usage: " << usedMem << " / " << totalMem << "\n";
         std::cout << "External Fragmentation: " << extFrag << "\n";
+        std::cout << "Pages paged in: " << memAlloc->getNumPagedIn() << "\n";
+        std::cout << "Pages paged out: " << memAlloc->getNumPagedOut() << "\n";
     }
 
     std::cout << "--------------------------------------\n";

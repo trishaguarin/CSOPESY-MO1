@@ -1,6 +1,6 @@
 #include "ReportGenerator.h"
 #include "Scheduler.h"
-#include "MemoryAllocator.h"
+#include "IMemoryAllocator.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -31,6 +31,8 @@ std::string ReportGenerator::generateReport() const
         uint32_t extFrag = memAlloc->getExternalFragmentation();
         ss << "Memory Usage: " << usedMem << " / " << totalMem << "\n";
         ss << "External Fragmentation: " << extFrag << "\n";
+        ss << "Pages paged in: " << memAlloc->getNumPagedIn() << "\n";
+        ss << "Pages paged out: " << memAlloc->getNumPagedOut() << "\n";
     }
 
     ss << "--------------------------------------\n";

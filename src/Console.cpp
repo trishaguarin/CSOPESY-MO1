@@ -113,6 +113,12 @@ void Console::processCommand(const std::string& input)
         return;
     }
 
+    if (input == "vmstat")
+    {
+        cmdVmstat();
+        return;
+    }
+
     std::cout << "Unknown command: '" << input << "'\n";
 }
 
@@ -210,6 +216,26 @@ void Console::cmdReportUtil()
 {
     reportGenerator->printToConsole();
     reportGenerator->saveToFile("csopesy-log.txt");
+}
+
+void Console::cmdVmstat()
+{
+    auto* memAlloc = scheduler->getMemoryAllocator();
+    if (!memAlloc)
+    {
+        std::cout << "Memory allocator not initialized.\n";
+        return;
+    }
+
+    uint32_t totalMem = memAlloc->getTotalMemory();
+    uint32_t usedMem = memAlloc->getUsedMemory();
+    uint32_t freeMem = totalMem - usedMem;
+
+    std::cout << totalMem << "\n";
+    std::cout << usedMem << "\n";
+    std::cout << freeMem << "\n";
+    std::cout << memAlloc->getNumPagedIn() << "\n";
+    std::cout << memAlloc->getNumPagedOut() << "\n";
 }
 
 void Console::cmdClear()
