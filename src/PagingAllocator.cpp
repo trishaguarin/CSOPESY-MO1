@@ -74,6 +74,12 @@ bool PagingAllocator::allocateForProcess(const std::string& processName, size_t 
     uint32_t pagesNeeded = static_cast<uint32_t>(memSize) / memPerFrame;
     if (pagesNeeded == 0) pagesNeeded = 1;
 
+    // If physical RAM has only 1 frame total and is currently in use, new processes wait in ready queue
+    if (numFrames == 1 && currentAllocatedSize > 0)
+    {
+        return false;
+    }
+
     // Create page table for this process
     std::vector<PageTableEntry> pt(pagesNeeded);
 
@@ -154,17 +160,19 @@ bool PagingAllocator::readMemory(const std::string& processName, uint32_t addres
     if (it == pageTables.end())
         return false;
 
-    size_t procMemSize = processMemSizes.count(processName) ? processMemSizes[processName] : 0;
-    if (address + 1 >= procMemSize)
-        return false; // access violation — out of process memory range
+    if (address + 1 >= 65536)
+        return false; // access violation — out of 16-bit address range
 
     int pageIdx = getPageForAddress(address);
-    if (pageIdx < 0 || pageIdx >= static_cast<int>(it->second.size()))
+    if (pageIdx < 0)
         return false;
 
+    if (pageIdx >= static_cast<int>(it->second.size()))
+    {
+        it->second.resize(pageIdx + 1);
+    }
+
     // Handle page fault if needed (page not in RAM)
-    // Note: we temporarily release and re-acquire lock pattern not needed since
-    // ensurePageLoaded works within the same lock scope
     ensurePageLoaded(processName, pageIdx);
 
     auto& pte = it->second[pageIdx];
@@ -187,13 +195,17 @@ bool PagingAllocator::writeMemory(const std::string& processName, uint32_t addre
     if (it == pageTables.end())
         return false;
 
-    size_t procMemSize = processMemSizes.count(processName) ? processMemSizes[processName] : 0;
-    if (address + 1 >= procMemSize)
+    if (address + 1 >= 65536)
         return false;
 
     int pageIdx = getPageForAddress(address);
-    if (pageIdx < 0 || pageIdx >= static_cast<int>(it->second.size()))
+    if (pageIdx < 0)
         return false;
+
+    if (pageIdx >= static_cast<int>(it->second.size()))
+    {
+        it->second.resize(pageIdx + 1);
+    }
 
     ensurePageLoaded(processName, pageIdx);
 

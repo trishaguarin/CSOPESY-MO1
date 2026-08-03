@@ -22,19 +22,9 @@ Scheduler::Scheduler(const SystemConfig& config)
 {
     coreStatus.assign(config.numCpu, false);
 
-    // Auto-detect allocator type:
-    // If mem-per-frame >= max-overall-mem → flat (one big frame = whole memory)
-    // Otherwise → paging
-    if (config.memPerFrame >= config.maxOverallMem)
-    {
-        memoryAllocator = std::make_unique<FlatMemoryAllocator>(
-            config.maxOverallMem, config.memPerFrame);
-    }
-    else
-    {
-        memoryAllocator = std::make_unique<PagingAllocator>(
-            config.maxOverallMem, config.memPerFrame);
-    }
+    // MCO2 Demand Paging Allocator
+    memoryAllocator = std::make_unique<PagingAllocator>(
+        config.maxOverallMem, config.memPerFrame);
 }
 
 Scheduler::~Scheduler()
@@ -189,9 +179,9 @@ void Scheduler::schedulerLoop()
         if (batchGenerating.load())
         {
             auto now = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
                 now - lastBatchTime).count();
-            if (elapsed >= static_cast<long long>(config.batchProcessFreq))
+            if (elapsed >= static_cast<long long>(config.batchProcessFreq * 20))
             {
                 lastBatchTime = now;
                 auto proc = generateProcess();
@@ -342,6 +332,11 @@ void Scheduler::coreWorker(int coreId)
             ticksUsed++;
             activeCpuTicks++;
 
+            if (config.delaysPerExec == 0)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            }
+
             // Check if process was terminated (access violation)
             if (proc->isTerminated())
             {
@@ -375,10 +370,11 @@ void Scheduler::coreWorker(int coreId)
             }
         }
 
-        // Sleep once per quantum to simulate CPU time and keep core visibly busy
+        // Sleep to simulate CPU tick time and keep core visibly busy
         if (config.delaysPerExec == 0)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(config.quantumCycles));
+            uint32_t sleepMs = (config.quantumCycles > 0) ? config.quantumCycles : 1;
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleepMs));
         }
 
     

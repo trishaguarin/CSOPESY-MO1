@@ -204,21 +204,40 @@ void Console::cmdScreen(const std::string& args)
         return;
     }
 
-    // screen -c <name> <memsize> "<instructions>"
+    // screen -c <name> [memsize] "<instructions>"
     if (args.size() > 3 && args.substr(0, 2) == "-c" && args[2] == ' ')
     {
         std::string remainder = args.substr(3);
 
-        // Parse: name memsize "instructions"
+        auto lt = remainder.find_first_not_of(" \t");
+        if (lt != std::string::npos) remainder = remainder.substr(lt);
+
         std::istringstream iss(remainder);
         std::string processName;
-        size_t memSize = 0;
-        iss >> processName >> memSize;
+        iss >> processName;
 
         if (processName.empty())
         {
             std::cout << "Error: Process name cannot be empty.\n";
             return;
+        }
+
+        size_t nameEnd = remainder.find(processName) + processName.length();
+        std::string rest = remainder.substr(nameEnd);
+        auto restLt = rest.find_first_not_of(" \t");
+        if (restLt != std::string::npos) rest = rest.substr(restLt);
+        else rest = "";
+
+        size_t memSize = 0;
+        if (!rest.empty() && std::isdigit(static_cast<unsigned char>(rest[0])))
+        {
+            std::istringstream restIss(rest);
+            restIss >> memSize;
+        }
+
+        if (memSize == 0)
+        {
+            memSize = scheduler->getConfig().minMemPerProc;
         }
 
         if (!isValidMemorySize(memSize))

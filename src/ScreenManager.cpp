@@ -125,9 +125,24 @@ void ScreenManager::parseAndAddInstructions(std::shared_ptr<Process> proc, const
         if (instruction.empty()) continue;
 
         // Parse instruction type
-        std::istringstream iss(instruction);
         std::string keyword;
-        iss >> keyword;
+        size_t openParenPos = instruction.find('(');
+        if (openParenPos != std::string::npos)
+        {
+            keyword = instruction.substr(0, openParenPos);
+        }
+        else
+        {
+            std::istringstream issTemp(instruction);
+            issTemp >> keyword;
+        }
+        auto kl = keyword.find_first_not_of(" \t");
+        auto kr = keyword.find_last_not_of(" \t");
+        if (kl != std::string::npos) keyword = keyword.substr(kl, kr - kl + 1);
+
+        std::istringstream iss(instruction);
+        std::string dummy;
+        iss >> dummy; // consume first token for remaining parsers
 
         if (keyword == "PRINT")
         {
@@ -242,7 +257,7 @@ void ScreenManager::reattachScreen(const std::string& processName)
 
     if (proc->getState() == Process::FINISHED)
     {
-        std::cout << "Process " << processName << " not found.\n";
+        enterScreenLoop(proc);
         return;
     }
 
