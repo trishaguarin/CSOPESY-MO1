@@ -27,7 +27,12 @@ private:
     void cmdSchedulerStart();
     void cmdSchedulerStop();
     void cmdReportUtil();
+    void cmdProcessSmi();
+    void cmdVmstat();
     void cmdClear();
+
+    // Helpers
+    bool isValidMemorySize(size_t size) const;
 
     // State
     bool running     = true;

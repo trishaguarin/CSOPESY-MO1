@@ -17,7 +17,8 @@ struct SystemConfig
     // Memory management
     uint32_t     maxOverallMem     = 16384;
     uint32_t     memPerFrame       = 16;
-    uint32_t     memPerProc        = 4096;
+    uint32_t     minMemPerProc     = 64;
+    uint32_t     maxMemPerProc     = 4096;
 };
 
 class ConfigParser

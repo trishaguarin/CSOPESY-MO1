@@ -3,10 +3,10 @@
 #include <sstream>
 #include <iomanip>
 
-Process::Process(int pid, const std::string& name)
-    : pid(pid), name(name),
+Process::Process(int pid, const std::string& name, size_t memorySize)
+    : pid(pid), name(name), memorySize(memorySize),
       state(READY), assignedCore(-1), commandCounter(0),
-      sleepTicksRemaining(0)
+      sleepTicksRemaining(0), memAllocator(nullptr)
 {
     auto now = std::chrono::system_clock::now();
     creationTime = std::chrono::system_clock::to_time_t(now);
@@ -24,6 +24,7 @@ Process::DisplaySnapshot Process::getDisplaySnapshot() const
     s.totalCommands   = static_cast<int>(commandList.size());
     s.name            = name;
     s.creationTimestamp = getCreationTimestamp();
+    s.memorySize      = memorySize;
     return s;
 }
 
@@ -37,6 +38,9 @@ void Process::addCommand(std::shared_ptr<ICommand> command)
 void Process::executeCurrentCommand(int coreId)
 {
     std::lock_guard<std::mutex> lock(processMutex);
+
+    if (state.load() == TERMINATED)
+        return;
 
     if (commandCounter >= static_cast<int>(commandList.size()))
     {
@@ -53,6 +57,9 @@ void Process::moveToNextLine()
 {
     std::lock_guard<std::mutex> lock(processMutex);
 
+    if (state.load() == TERMINATED)
+        return;
+
     commandCounter++;
     if (commandCounter >= static_cast<int>(commandList.size()))
     {
@@ -68,7 +75,8 @@ int                   Process::getAssignedCore()   const { return assignedCore.l
 int                   Process::getCommandCounter() const { return commandCounter; }
 int                   Process::getTotalCommands()  const { return static_cast<int>(commandList.size()); }
 std::time_t           Process::getCreationTime()   const { return creationTime; }
-bool                  Process::isFinished()        const { return state.load() == FINISHED; }
+bool                  Process::isFinished()        const { auto s = state.load(); return s == FINISHED || s == TERMINATED; }
+size_t                Process::getMemorySize()     const { return memorySize; }
 
 // ── SymbolTable Access ───────────────────────────────────────────────────────
 SymbolTable& Process::getSymbolTable()
@@ -76,9 +84,43 @@ SymbolTable& Process::getSymbolTable()
     return symbolTable;
 }
 
+// ── Memory Allocator Access ──────────────────────────────────────────────────
+void Process::setMemoryAllocator(IMemoryAllocator* alloc) { memAllocator = alloc; }
+IMemoryAllocator* Process::getMemoryAllocator() const { return memAllocator; }
+
 // ── Setters ──────────────────────────────────────────────────────────────────
 void Process::setState(ProcessState s)    { state.store(s); }
 void Process::setAssignedCore(int core)   { assignedCore.store(core); }
+
+// ── Memory Access Violation ──────────────────────────────────────────────────
+void Process::terminateWithViolation(uint32_t address)
+{
+    state.store(TERMINATED);
+
+    // Format address as hex
+    std::ostringstream addrOss;
+    addrOss << "0x" << std::hex << std::uppercase << address;
+    violationAddr = addrOss.str();
+
+    // Capture violation time as HH:MM:SS
+    auto now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    std::tm tm_info;
+#ifdef _WIN32
+    localtime_s(&tm_info, &t);
+#else
+    localtime_r(&t, &tm_info);
+#endif
+    std::ostringstream timeOss;
+    timeOss << std::setw(2) << std::setfill('0') << tm_info.tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << tm_info.tm_min << ":"
+            << std::setw(2) << std::setfill('0') << tm_info.tm_sec;
+    violationTimeStr = timeOss.str();
+}
+
+bool Process::isTerminated() const { return state.load() == TERMINATED; }
+std::string Process::getViolationAddress() const { return violationAddr; }
+std::string Process::getViolationTime() const { return violationTimeStr; }
 
 // ── Sleep Management ─────────────────────────────────────────────────────────
 

@@ -2,11 +2,12 @@
 
 #include "Process.h"
 #include "ConfigParser.h"
-#include "MemoryAllocator.h"
+#include "IMemoryAllocator.h"
 
 #include <queue>
 #include <vector>
 #include <map>
+#include <deque>
 #include <memory>
 #include <atomic>
 #include <thread>
@@ -45,7 +46,12 @@ public:
     uint64_t getCpuTicks() const;
 
     const SystemConfig& getConfig() const { return config; }
-    MemoryAllocator* getMemoryAllocator() const { return memoryAllocator.get(); }
+    IMemoryAllocator* getMemoryAllocator() const { return memoryAllocator.get(); }
+
+    // ── CPU Tick Counters for vmstat ──────────────────────────────────────
+    uint64_t getIdleCpuTicks()   const { return idleCpuTicks.load(); }
+    uint64_t getActiveCpuTicks() const { return activeCpuTicks.load(); }
+    uint64_t getTotalCpuTicks()  const { return idleCpuTicks.load() + activeCpuTicks.load(); }
 
 private:
     void schedulerLoop();
@@ -58,12 +64,16 @@ private:
     SystemConfig config;
 
     // ── Memory Allocator ─────────────────────────────────────────────────
-    std::unique_ptr<MemoryAllocator> memoryAllocator;
+    std::unique_ptr<IMemoryAllocator> memoryAllocator;
 
     // ── State ────────────────────────────────────────────────────────────
     std::atomic<bool>     running{false};
     std::atomic<bool>     batchGenerating{false};
     std::atomic<uint64_t> cpuTickCounter{0};
+
+    // ── CPU tick counters for vmstat ──────────────────────────────────────
+    std::atomic<uint64_t> idleCpuTicks{0};
+    std::atomic<uint64_t> activeCpuTicks{0};
 
     // ── Process Queues ───────────────────────────────────────────────────
     std::queue<std::shared_ptr<Process>>   readyQueue;

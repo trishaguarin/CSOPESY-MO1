@@ -3,9 +3,12 @@
 #include "Scheduler.h"
 #include "ScreenManager.h"
 #include "ReportGenerator.h"
+#include "IMemoryAllocator.h"
 
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <cmath>
 
 Console::Console() = default;
 
@@ -113,6 +116,18 @@ void Console::processCommand(const std::string& input)
         return;
     }
 
+    if (input == "process-smi")
+    {
+        cmdProcessSmi();
+        return;
+    }
+
+    if (input == "vmstat")
+    {
+        cmdVmstat();
+        return;
+    }
+
     std::cout << "Unknown command: '" << input << "'\n";
 }
 
@@ -147,7 +162,7 @@ void Console::cmdScreen(const std::string& args)
 {
     if (args.empty())
     {
-        std::cout << "Usage: screen -s <name> | screen -r <name> | screen -ls\n";
+        std::cout << "Usage: screen -s <name> <memsize> | screen -c <name> <memsize> \"<instructions>\" | screen -r <name> | screen -ls\n";
         return;
     }
 
@@ -157,24 +172,78 @@ void Console::cmdScreen(const std::string& args)
         return;
     }
 
+    // screen -s <name> <memsize>
     if (args.size() > 3 && args.substr(0, 2) == "-s" && args[2] == ' ')
     {
-        std::string processName = args.substr(3);
-        // Trim the name
-        auto lt = processName.find_first_not_of(" \t");
-        auto rt = processName.find_last_not_of(" \t");
-        if (lt == std::string::npos)
+        std::string remainder = args.substr(3);
+        std::istringstream iss(remainder);
+        std::string processName;
+        size_t memSize = 0;
+        iss >> processName >> memSize;
+
+        if (processName.empty())
         {
             std::cout << "Error: Process name cannot be empty.\n";
             return;
         }
-        processName = processName.substr(lt, rt - lt + 1);
-        screenManager->createScreen(processName);
-        // After returning from screen, reprint header
+
+        if (memSize == 0)
+        {
+            // Default to minMemPerProc if not specified
+            memSize = scheduler->getConfig().minMemPerProc;
+        }
+
+        if (!isValidMemorySize(memSize))
+        {
+            std::cout << "invalid memory allocation\n";
+            return;
+        }
+
+        screenManager->createScreen(processName, memSize);
         printHeader();
         return;
     }
 
+    // screen -c <name> <memsize> "<instructions>"
+    if (args.size() > 3 && args.substr(0, 2) == "-c" && args[2] == ' ')
+    {
+        std::string remainder = args.substr(3);
+
+        // Parse: name memsize "instructions"
+        std::istringstream iss(remainder);
+        std::string processName;
+        size_t memSize = 0;
+        iss >> processName >> memSize;
+
+        if (processName.empty())
+        {
+            std::cout << "Error: Process name cannot be empty.\n";
+            return;
+        }
+
+        if (!isValidMemorySize(memSize))
+        {
+            std::cout << "invalid memory allocation\n";
+            return;
+        }
+
+        // Extract instructions between quotes
+        size_t firstQuote = remainder.find('"');
+        size_t lastQuote = remainder.rfind('"');
+        if (firstQuote == std::string::npos || firstQuote == lastQuote)
+        {
+            std::cout << "Error: Instructions must be enclosed in quotes.\n";
+            return;
+        }
+
+        std::string instructions = remainder.substr(firstQuote + 1, lastQuote - firstQuote - 1);
+
+        screenManager->createScreenWithInstructions(processName, memSize, instructions);
+        printHeader();
+        return;
+    }
+
+    // screen -r <name>
     if (args.size() > 3 && args.substr(0, 2) == "-r" && args[2] == ' ')
     {
         std::string processName = args.substr(3);
@@ -212,6 +281,41 @@ void Console::cmdReportUtil()
     reportGenerator->saveToFile("csopesy-log.txt");
 }
 
+void Console::cmdProcessSmi()
+{
+    screenManager->printProcessSmi();
+}
+
+void Console::cmdVmstat()
+{
+    auto* memAlloc = scheduler->getMemoryAllocator();
+    if (!memAlloc)
+    {
+        std::cout << "Memory allocator not initialized.\n";
+        return;
+    }
+
+    uint32_t totalMem = memAlloc->getTotalMemory();
+    uint32_t usedMem = memAlloc->getUsedMemory();
+    uint32_t freeMem = totalMem - usedMem;
+
+    uint64_t idleTicks = scheduler->getIdleCpuTicks();
+    uint64_t activeTicks = scheduler->getActiveCpuTicks();
+    uint64_t totalTicks = scheduler->getTotalCpuTicks();
+
+    uint64_t pagedIn = memAlloc->getNumPagedIn();
+    uint64_t pagedOut = memAlloc->getNumPagedOut();
+
+    std::cout << totalMem << "\n";
+    std::cout << usedMem << "\n";
+    std::cout << freeMem << "\n";
+    std::cout << idleTicks << "\n";
+    std::cout << activeTicks << "\n";
+    std::cout << totalTicks << "\n";
+    std::cout << pagedIn << "\n";
+    std::cout << pagedOut << "\n";
+}
+
 void Console::cmdClear()
 {
 #ifdef _WIN32
@@ -220,4 +324,13 @@ void Console::cmdClear()
     system("clear");
 #endif
     printHeader();
+}
+
+bool Console::isValidMemorySize(size_t size) const
+{
+    // Must be power of 2, in range [64, 65536]
+    if (size < 64 || size > 65536)
+        return false;
+    // Check power of 2
+    return (size & (size - 1)) == 0;
 }

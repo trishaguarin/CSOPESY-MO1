@@ -155,16 +155,27 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
             }
             parsedConfig.memPerFrame = v;
         }
-        else if (key == "mem-per-proc")
+        else if (key == "min-mem-per-proc")
         {
             uint32_t v;
             if (!parseUint32(value, v) || v < 1)
             {
-                std::cerr << "Error: Invalid mem-per-proc value on line " << lineNumber << ".\n";
+                std::cerr << "Error: Invalid min-mem-per-proc value on line " << lineNumber << ".\n";
                 loaded = false;
                 return false;
             }
-            parsedConfig.memPerProc = v;
+            parsedConfig.minMemPerProc = v;
+        }
+        else if (key == "max-mem-per-proc")
+        {
+            uint32_t v;
+            if (!parseUint32(value, v) || v < 1)
+            {
+                std::cerr << "Error: Invalid max-mem-per-proc value on line " << lineNumber << ".\n";
+                loaded = false;
+                return false;
+            }
+            parsedConfig.maxMemPerProc = v;
         }
         else
         {

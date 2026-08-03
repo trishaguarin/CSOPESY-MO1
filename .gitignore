@@ -17,6 +17,8 @@ cmake-build-*/
 
 # Output files (generated at runtime)
 csopesy-log.txt
+MEM_STAMPS/
+csopesy-backing-store.txt
 
 # OS files
 Thumbs.db

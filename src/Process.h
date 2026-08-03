@@ -9,6 +9,11 @@
 #include <atomic>
 #include <ctime>
 #include <memory>
+#include <cstdint>
+#include <sstream>
+#include <iomanip>
+
+class IMemoryAllocator; // forward declaration
 
 class Process
 {
@@ -17,11 +22,12 @@ public:
     {
         READY,
         RUNNING,
-        WAITING,  // used by SLEEP instruction
-        FINISHED
+        WAITING,    // used by SLEEP instruction
+        FINISHED,
+        TERMINATED  // shut down due to memory access violation
     };
 
-    Process(int pid, const std::string& name);
+    Process(int pid, const std::string& name, size_t memorySize = 0);
     ~Process();
 
     
@@ -38,6 +44,7 @@ public:
         int          totalCommands;
         std::string  name;
         std::string  creationTimestamp;
+        size_t       memorySize;
     };
     DisplaySnapshot getDisplaySnapshot() const;
 
@@ -50,16 +57,26 @@ public:
     int                getTotalCommands()   const; // total command count
     std::time_t        getCreationTime()    const;
     bool               isFinished()         const;
+    size_t             getMemorySize()      const;
 
     // ── SymbolTable Access ───────────────────────────────────────────────
     SymbolTable& getSymbolTable();
+
+    // ── Memory Allocator Access (set by Scheduler) ──────────────────────
+    void setMemoryAllocator(IMemoryAllocator* alloc);
+    IMemoryAllocator* getMemoryAllocator() const;
 
     // ── Setters ──────────────────────────────────────────────────────────
     void setState(ProcessState s);
     void setAssignedCore(int core);
 
+    // ── Memory Access Violation ──────────────────────────────────────────
+    void terminateWithViolation(uint32_t address);
+    bool isTerminated() const;
+    std::string getViolationAddress() const;
+    std::string getViolationTime() const;
+
     // ── Sleep Management ─────────────────────────────────────────────────
-    // TODO: Called by SleepCommand to initiate sleep
     void setSleepTicks(int ticks);
     void tickSleep();
 
@@ -77,6 +94,7 @@ private:
     std::atomic<ProcessState> state;
     std::atomic<int>         assignedCore;
     std::time_t              creationTime;
+    size_t                   memorySize;
 
     std::vector<std::shared_ptr<ICommand>> commandList;
     int commandCounter = 0;
@@ -85,6 +103,13 @@ private:
     int sleepTicksRemaining = 0;
 
     std::vector<std::string> outputLog;
+
+    // Memory allocator pointer (non-owning, set by Scheduler)
+    IMemoryAllocator* memAllocator = nullptr;
+
+    // Memory access violation info
+    std::string violationAddr;
+    std::string violationTimeStr;
 
     mutable std::mutex processMutex; // thread safety (mutable: lockable in const methods)
 };

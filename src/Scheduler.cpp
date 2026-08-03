@@ -1,5 +1,13 @@
 #include "Scheduler.h"
+#include "FlatMemoryAllocator.h"
+#include "PagingAllocator.h"
 #include "PrintCommand.h"
+#include "DeclareCommand.h"
+#include "AddCommand.h"
+#include "SleepCommand.h"
+#include "ReadCommand.h"
+#include "WriteCommand.h"
+
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -9,16 +17,24 @@
 #include <fstream>
 #include <filesystem>
 
-#include "DeclareCommand.h"
-#include "AddCommand.h"
-#include "SleepCommand.h"
-
 Scheduler::Scheduler(const SystemConfig& config)
     : config(config)
 {
     coreStatus.assign(config.numCpu, false);
-    memoryAllocator = std::make_unique<MemoryAllocator>(
-        config.maxOverallMem, config.memPerProc, config.memPerFrame);
+
+    // Auto-detect allocator type:
+    // If mem-per-frame >= max-overall-mem → flat (one big frame = whole memory)
+    // Otherwise → paging
+    if (config.memPerFrame >= config.maxOverallMem)
+    {
+        memoryAllocator = std::make_unique<FlatMemoryAllocator>(
+            config.maxOverallMem, config.memPerFrame);
+    }
+    else
+    {
+        memoryAllocator = std::make_unique<PagingAllocator>(
+            config.maxOverallMem, config.memPerFrame);
+    }
 }
 
 Scheduler::~Scheduler()
@@ -107,8 +123,11 @@ std::vector<std::shared_ptr<Process>> Scheduler::getFinishedProcesses() const
     std::lock_guard<std::mutex> lock(listMutex);
     std::vector<std::shared_ptr<Process>> result;
     for (auto& p : allProcesses)
-        if (p->getState() == Process::FINISHED)
+    {
+        auto s = p->getState();
+        if (s == Process::FINISHED || s == Process::TERMINATED)
             result.push_back(p);
+    }
     return result;
 }
 
@@ -220,10 +239,11 @@ void Scheduler::schedulerLoop()
                     auto proc = readyQueue.front();
                     readyQueue.pop();
 
-                    // Try to allocate memory for this process (skip if already has memory from preemption)
+                    // Try to allocate memory for this process
                     if (!memoryAllocator->hasAllocation(proc->getName()))
                     {
-                        bool hasMemory = memoryAllocator->allocate(proc->getName());
+                        bool hasMemory = memoryAllocator->allocateForProcess(
+                            proc->getName(), proc->getMemorySize());
                         if (!hasMemory)
                         {
                             // Memory full — push back to tail of ready queue
@@ -231,6 +251,9 @@ void Scheduler::schedulerLoop()
                             continue;
                         }
                     }
+
+                    // Set allocator pointer on process for READ/WRITE commands
+                    proc->setMemoryAllocator(memoryAllocator.get());
 
                     proc->setAssignedCore(i);          // 1. record which core
                     coreStatus[i] = true;              // 2. mark core busy
@@ -295,11 +318,12 @@ void Scheduler::coreWorker(int coreId)
         while (proc && !proc->isFinished() && running.load())
         {
             // Busy-wait delay (delays-per-exec)
-            // Process stays on CPU but does no work
+            // Process stays on CPU but does no work — counts as ACTIVE ticks
             bool preempted = false;
             for (uint32_t d = 0; d < config.delaysPerExec; ++d)
             {
                 ticksUsed++;
+                activeCpuTicks++;
                 // RR: check quantum during delay too
                 if (config.schedulerAlgo == "rr" && ticksUsed >= config.quantumCycles)
                 {
@@ -315,7 +339,15 @@ void Scheduler::coreWorker(int coreId)
             // Execute one command
             proc->executeCurrentCommand(coreId);
             ticksUsed++;
+            activeCpuTicks++;
 
+            // Check if process was terminated (access violation)
+            if (proc->isTerminated())
+            {
+                proc->setAssignedCore(-1);
+                memoryAllocator->deallocateProcess(proc->getName());
+                break;
+            }
 
             if (proc->getState() == Process::WAITING)
             {
@@ -331,7 +363,7 @@ void Scheduler::coreWorker(int coreId)
             {
                 proc->setAssignedCore(-1);
                 // Release memory when process finishes
-                memoryAllocator->deallocate(proc->getName());
+                memoryAllocator->deallocateProcess(proc->getName());
                 break;
             }
 
@@ -343,7 +375,6 @@ void Scheduler::coreWorker(int coreId)
         }
 
         // Sleep once per quantum to simulate CPU time and keep core visibly busy
-        // (Avoids per-instruction sleep which suffers from Windows ~15ms granularity)
         if (config.delaysPerExec == 0)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(config.quantumCycles));
@@ -368,6 +399,10 @@ void Scheduler::coreWorker(int coreId)
             coreProcess.erase(coreId);
             coreTicksUsed[coreId] = 0;
         }
+
+        // Count idle tick when core becomes free
+        idleCpuTicks++;
+
         schedulerCV.notify_all();
     }
 }
@@ -378,7 +413,7 @@ std::shared_ptr<Process> Scheduler::generateProcess()
 {
     processCounter++;
 
-    // Name format: p01, p02, ..., p10, p100, etc.
+    // Name format: process01, process02, etc.
     std::ostringstream nameStream;
     nameStream << "process" << std::setw(2) << std::setfill('0') << processCounter;
     std::string name = nameStream.str();
@@ -388,22 +423,52 @@ std::shared_ptr<Process> Scheduler::generateProcess()
     std::uniform_int_distribution<uint32_t> dist(config.minIns, config.maxIns);
     uint32_t numInstructions = dist(rng);
 
-    auto proc = std::make_shared<Process>(processCounter, name);
+    // Roll random memory size as power of 2 between min and max mem per proc
+    // Find the power-of-2 range
+    uint32_t minPow = 0, maxPow = 0;
+    for (uint32_t p = 0; p <= 16; ++p)
+    {
+        if ((1u << p) >= config.minMemPerProc && minPow == 0)
+            minPow = p;
+        if ((1u << p) <= config.maxMemPerProc)
+            maxPow = p;
+    }
+    std::uniform_int_distribution<uint32_t> memPowDist(minPow, maxPow);
+    size_t memSize = 1u << memPowDist(rng);
+
+    auto proc = std::make_shared<Process>(processCounter, name, memSize);
 
     // Initialize variable "x" to 0
     proc->getSymbolTable().setVariable("x", 0);
 
     std::uniform_int_distribution<int> addDist(1, 10);
+    std::uniform_int_distribution<uint32_t> addrDist(0, static_cast<uint32_t>(memSize > 2 ? memSize - 2 : 0));
 
     for (uint32_t i = 0; i < numInstructions; ++i)
     {
-        if (i % 2 == 0)
+        int choice = i % 4; // Cycle through: PRINT, ADD, WRITE, READ
+        switch (choice)
         {
+        case 0:
             proc->addCommand(std::make_shared<PrintCommand>("Value from: ", "x"));
-        }
-        else
-        {
+            break;
+        case 1:
             proc->addCommand(std::make_shared<AddCommand>("x", "x", std::to_string(addDist(rng))));
+            break;
+        case 2:
+        {
+            uint32_t addr = addrDist(rng);
+            addr = addr & ~1u; // align to 2-byte boundary
+            proc->addCommand(std::make_shared<WriteCommand>(addr, "x"));
+            break;
+        }
+        case 3:
+        {
+            uint32_t addr = addrDist(rng);
+            addr = addr & ~1u; // align to 2-byte boundary
+            proc->addCommand(std::make_shared<ReadCommand>("x", addr));
+            break;
+        }
         }
     }
 
@@ -449,8 +514,10 @@ void Scheduler::writeMemoryStamp()
     {
         file << "Timestamp: " << ts.str() << "\n";
         file << "Number of processes in memory: " << procCount << "\n\n";
-        file << "Total external fragmentation in KB: " << (extFrag / 1024) << "\n\n";
-        file << memoryAllocator->getMemoryStamp();
+        file << "Total external fragmentation in KB: " << (extFrag / 1024) << "\n";
+        file << "num-pages-in: " << memoryAllocator->getNumPagedIn() << "\n";
+        file << "num-pages-out: " << memoryAllocator->getNumPagedOut() << "\n\n";
+        file << memoryAllocator->visualizeMemory();
         file.close();
     }
 }

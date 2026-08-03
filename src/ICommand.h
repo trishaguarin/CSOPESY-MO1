@@ -15,7 +15,9 @@ public:
         ADD,
         SUBTRACT,
         SLEEP,
-        FOR
+        FOR,
+        MEM_READ,
+        MEM_WRITE
     };
 
     ICommand(CommandType type) : type(type) {}
