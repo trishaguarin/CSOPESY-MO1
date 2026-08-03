@@ -282,7 +282,8 @@ void Scheduler::schedulerLoop()
 
         // ── Memory stamp every quantum-cycles ticks ──
         quantumCycleCount++;
-        if (quantumCycleCount % config.quantumCycles == 0)
+        if (config.quantumCycles > 0 &&
+            quantumCycleCount % config.quantumCycles == 0)
         {
             writeMemoryStamp();
         }
@@ -325,7 +326,7 @@ void Scheduler::coreWorker(int coreId)
                 ticksUsed++;
                 activeCpuTicks++;
                 // RR: check quantum during delay too
-                if (config.schedulerAlgo == "rr" && ticksUsed >= config.quantumCycles)
+                if (config.schedulerAlgo == "rr" && config.quantumCycles > 0 && ticksUsed >= config.quantumCycles)
                 {
                     preempted = true;
                     break;
@@ -368,7 +369,7 @@ void Scheduler::coreWorker(int coreId)
             }
 
             // RR: check quantum after instruction execution
-            if (config.schedulerAlgo == "rr" && ticksUsed >= config.quantumCycles)
+            if (config.schedulerAlgo == "rr" && config.quantumCycles > 0 && ticksUsed >= config.quantumCycles)
             {
                 break; 
             }
@@ -479,6 +480,9 @@ std::shared_ptr<Process> Scheduler::generateProcess()
 
 void Scheduler::writeMemoryStamp()
 {
+    if (config.quantumCycles <= 0)
+        return;
+
     uint64_t qq = quantumCycleCount / config.quantumCycles;
 
     std::filesystem::create_directories("MEM_STAMPS");

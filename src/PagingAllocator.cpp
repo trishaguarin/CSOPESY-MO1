@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cstring>
+#include <stdexcept>
 
 PagingAllocator::PagingAllocator(uint32_t maxMem, uint32_t memPerFrame)
     : memPerFrame(memPerFrame)
@@ -9,6 +10,12 @@ PagingAllocator::PagingAllocator(uint32_t maxMem, uint32_t memPerFrame)
     memoryAllocatorType = PAGING;
     maximumSize = maxMem;
     currentAllocatedSize = 0;
+
+    if (memPerFrame == 0 || memPerFrame > maxMem)
+    {
+        throw std::invalid_argument(
+            "PagingAllocator: mem-per-frame must be > 0 and <= max-overall-mem");
+    }
 
     numFrames = maxMem / memPerFrame;
 

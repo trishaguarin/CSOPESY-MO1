@@ -59,7 +59,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         if (key == "num-cpu")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1 || v > 128)
+            if (!parseUint32(value, v) || v > 128)
             {
                 std::cerr << "Error: Invalid num-cpu value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -81,7 +81,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "quantum-cycles")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid quantum-cycles value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -92,7 +92,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "batch-process-freq")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid batch-process-freq value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -103,7 +103,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "min-ins")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid min-ins value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -114,7 +114,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "max-ins")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid max-ins value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -136,7 +136,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "max-overall-mem")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid max-overall-mem value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -147,7 +147,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "mem-per-frame")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid mem-per-frame value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -158,7 +158,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "min-mem-per-proc")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid min-mem-per-proc value on line " << lineNumber << ".\n";
                 loaded = false;
@@ -169,7 +169,7 @@ bool ConfigParser::loadFromFile(const std::string& filepath)
         else if (key == "max-mem-per-proc")
         {
             uint32_t v;
-            if (!parseUint32(value, v) || v < 1)
+            if (!parseUint32(value, v))
             {
                 std::cerr << "Error: Invalid max-mem-per-proc value on line " << lineNumber << ".\n";
                 loaded = false;
