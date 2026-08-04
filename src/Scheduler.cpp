@@ -151,13 +151,7 @@ int Scheduler::getCoresAvailable() const
 
 float Scheduler::getCpuUtilization() const
 {
-    std::lock_guard<std::mutex> lock(windowMutex);
-    if (utilizationWindow.empty()) return 0.0f;
-
-    double sum = 0.0;
-    for (float v : utilizationWindow)
-        sum += v;
-    return static_cast<float>(sum / utilizationWindow.size());
+    return getNumCores() > 0 ? (static_cast<float>(getCoresUsed()) / getNumCores()) * 100.0f : 0.0f;
 }
 
 uint64_t Scheduler::getCpuTicks() const
@@ -181,7 +175,7 @@ void Scheduler::schedulerLoop()
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
                 now - lastBatchTime).count();
-            if (elapsed >= static_cast<long long>(config.batchProcessFreq * 20))
+            if (elapsed >= static_cast<long long>(config.batchProcessFreq * 100))
             {
                 lastBatchTime = now;
                 auto proc = generateProcess();
