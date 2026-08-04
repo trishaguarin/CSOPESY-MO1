@@ -206,8 +206,3 @@ All components have been validated end-to-end against the mock quiz's test-case 
 | **Thread Workers**              | `Scheduler` core worker threads              |
 | **Single Ready Queue**          | `Scheduler` — memory-gated dequeue           |
 
----
-
-## Assessment
-
-Assessed via **black-box quiz** — only `config.txt` is modified between test cases. No recompilation of source files is allowed during the quiz; the program is started once via the IDE's Run/Debug and left running for the duration of each test case.
