@@ -325,14 +325,14 @@ void Console::cmdVmstat()
     uint64_t pagedIn = memAlloc->getNumPagedIn();
     uint64_t pagedOut = memAlloc->getNumPagedOut();
 
-    std::cout << totalMem << "\n";
-    std::cout << usedMem << "\n";
-    std::cout << freeMem << "\n";
-    std::cout << idleTicks << "\n";
-    std::cout << activeTicks << "\n";
-    std::cout << totalTicks << "\n";
-    std::cout << pagedIn << "\n";
-    std::cout << pagedOut << "\n";
+    std::cout << std::right << std::setw(10) << totalMem   << " Total memory\n";
+    std::cout << std::right << std::setw(10) << usedMem    << " Used memory\n";
+    std::cout << std::right << std::setw(10) << freeMem    << " Free memory\n";
+    std::cout << std::right << std::setw(10) << idleTicks  << " Idle cpu ticks\n";
+    std::cout << std::right << std::setw(10) << activeTicks<< " Active cpu ticks\n";
+    std::cout << std::right << std::setw(10) << totalTicks << " Total cpu ticks\n";
+    std::cout << std::right << std::setw(10) << pagedIn    << " Num paged in\n";
+    std::cout << std::right << std::setw(10) << pagedOut   << " Num paged out\n";
 }
 
 void Console::cmdClear()

@@ -154,6 +154,31 @@ void ScreenManager::parseAndAddInstructions(std::shared_ptr<Process> proc, const
             {
                 std::string content = instruction.substr(openParen + 1, closeParen - openParen - 1);
 
+                // Unescape \" -> " (the whole instruction string arrives already
+                // inside one pair of outer quotes, so nested quotes are escaped)
+                {
+                    std::string unescaped;
+                    unescaped.reserve(content.size());
+                    for (size_t i = 0; i < content.size(); ++i)
+                    {
+                        if (content[i] == '\\' && i + 1 < content.size() && content[i + 1] == '"')
+                            continue; // drop the backslash, keep the quote on next iter
+                        unescaped += content[i];
+                    }
+                    content = unescaped;
+                }
+
+                // Extract text strictly between the first and last literal '"' —
+                // preserves internal spacing exactly (e.g. "Result: " keeps its
+                // trailing space) rather than trimming it away.
+                auto extractQuoted = [](const std::string& s) -> std::string {
+                    size_t first = s.find('"');
+                    size_t last = s.rfind('"');
+                    if (first == std::string::npos || last == std::string::npos || last <= first)
+                        return "";
+                    return s.substr(first + 1, last - first - 1);
+                };
+
                 // Check for + concatenation
                 size_t plusPos = content.find('+');
                 if (plusPos != std::string::npos)
@@ -161,10 +186,7 @@ void ScreenManager::parseAndAddInstructions(std::shared_ptr<Process> proc, const
                     std::string msgPart = content.substr(0, plusPos);
                     std::string varPart = content.substr(plusPos + 1);
 
-                    // Trim and remove quotes from message part
-                    auto ml = msgPart.find_first_not_of(" \t\"\\");
-                    auto mr = msgPart.find_last_not_of(" \t\"\\");
-                    std::string msg = (ml != std::string::npos) ? msgPart.substr(ml, mr - ml + 1) : "";
+                    std::string msg = extractQuoted(msgPart);
 
                     // Trim variable name
                     auto vl = varPart.find_first_not_of(" \t");
@@ -176,9 +198,7 @@ void ScreenManager::parseAndAddInstructions(std::shared_ptr<Process> proc, const
                 else
                 {
                     // Just a message
-                    auto ml = content.find_first_not_of(" \t\"\\");
-                    auto mr = content.find_last_not_of(" \t\"\\");
-                    std::string msg = (ml != std::string::npos) ? content.substr(ml, mr - ml + 1) : "";
+                    std::string msg = extractQuoted(content);
                     proc->addCommand(std::make_shared<PrintCommand>(msg, ""));
                 }
             }
@@ -362,19 +382,23 @@ void ScreenManager::printProcessSmi()
     std::cout << "----------------------------------------------\n";
     std::cout << "| PROCESS-SMI V01.00 Driver Version: 01.00  |\n";
     std::cout << "----------------------------------------------\n";
+    std::cout << "\n";
 
     float util = scheduler->getCpuUtilization();
     uint32_t usedMem = memAlloc->getUsedMemory();
     uint32_t totalMem = memAlloc->getTotalMemory();
+    float memUtil = (totalMem > 0) ? (static_cast<float>(usedMem) / totalMem) * 100.0f : 0.0f;
 
-    std::cout << " CPU-Util: " << std::fixed << std::setprecision(0) << util << "%\n";
-    std::cout << " Memory Usage: " << usedMem << "MiB / " << totalMem << "MiB\n";
-    std::cout << "----------------------------------------------\n";
+    std::cout << "CPU-Util: " << std::fixed << std::setprecision(0) << util << "%\n";
+    std::cout << "Memory Usage: " << usedMem << "MiB / " << totalMem << "MiB\n";
+    std::cout << "Memory Util: " << std::fixed << std::setprecision(0) << memUtil << "%\n";
+    std::cout << "\n";
 
     // Process list with memory
     std::cout << "==============================================\n";
-    std::cout << " Running processes and memory usage:\n";
+    std::cout << "Running processes and memory usage:\n";
     std::cout << "----------------------------------------------\n";
+    std::cout << "\n";
 
     auto allProcs = scheduler->getAllProcesses();
     bool anyShown = false;
@@ -383,17 +407,16 @@ void ScreenManager::printProcessSmi()
         auto s = p->getState();
         if (s == Process::RUNNING || s == Process::READY || s == Process::WAITING)
         {
-            size_t procMem = memAlloc->getProcessMemorySize(p->getName());
-            if (procMem > 0 || memAlloc->hasAllocation(p->getName()))
+            size_t procMem = memAlloc->getResidentMemory(p->getName());
+            if (procMem > 0)
             {
-                std::cout << " " << std::left << std::setw(20) << p->getName()
-                          << procMem << "MiB\n";
+                std::cout << p->getName() << " " << procMem << "MiB\n";
                 anyShown = true;
             }
         }
     }
     if (!anyShown)
-        std::cout << " (none)\n";
+        std::cout << "(none)\n";
 
     std::cout << "----------------------------------------------\n";
 }

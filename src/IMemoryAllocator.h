@@ -43,6 +43,15 @@ public:
     // Per-process memory info for process-smi
     virtual size_t      getProcessMemorySize(const std::string& processName) const = 0;
 
+    // Actual physical memory currently occupied by this process right now
+    // (== getProcessMemorySize for flat allocation; for paging, only the
+    // pages currently resident in a frame — evicted pages don't count).
+    // Default falls back to nominal size for allocators without partial residency.
+    virtual size_t      getResidentMemory(const std::string& processName) const
+    {
+        return getProcessMemorySize(processName);
+    }
+
     MemoryAllocatorType getType() const { return memoryAllocatorType; }
 
 protected:

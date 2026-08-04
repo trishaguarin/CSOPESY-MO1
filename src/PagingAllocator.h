@@ -31,6 +31,7 @@ public:
     uint32_t    getTotalMemory() const override { return static_cast<uint32_t>(maximumSize); }
     uint32_t    getExternalFragmentation() const override;
     size_t      getProcessMemorySize(const std::string& processName) const override;
+    size_t      getResidentMemory(const std::string& processName) const override;
 
     uint64_t    getNumPagedIn() const override { return backingStore.getNumPagedIn(); }
     uint64_t    getNumPagedOut() const override { return backingStore.getNumPagedOut(); }

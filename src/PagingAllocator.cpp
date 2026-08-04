@@ -266,6 +266,21 @@ size_t PagingAllocator::getProcessMemorySize(const std::string& processName) con
     return 0;
 }
 
+size_t PagingAllocator::getResidentMemory(const std::string& processName) const
+{
+    std::lock_guard<std::mutex> lock(memMutex);
+    auto it = pageTables.find(processName);
+    if (it == pageTables.end())
+        return 0;
+
+    size_t residentPages = 0;
+    for (auto& pte : it->second)
+        if (pte.isValid && pte.frameNumber >= 0)
+            residentPages++;
+
+    return residentPages * memPerFrame;
+}
+
 // ── Internal Helpers ─────────────────────────────────────────────────────────
 
 int PagingAllocator::findFreeFrame() const
